@@ -1,18 +1,18 @@
-import express, { static } from 'express';
-import { urlencoded } from 'body-parser';
-import { createConnection } from 'mysql';
+const express = require('express')
+const bodyParser = require('body-parser')
+const mysql = require('mysql')
 
 const app = express()
 
 app.set('view engine', 'ejs')
-app.use(static('public'))
-app.use(urlencoded({extended: true}))
+app.use(express.static('public'))
+app.use(bodyParser.urlencoded({extended: true}))
 
 const server = app.listen(process.env.PORT || 3000, () => {
     console.log('Server lauscht auf Port %s', server.address().port)    
 })
 
-var con = createConnection({
+var con = mysql.createConnection({
     host: "130.255.124.99",    
     user: "placematman",
     password: "BKB123456!",
