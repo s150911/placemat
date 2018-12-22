@@ -1,0 +1,21 @@
+{
+  "name": "placemat",
+  "version": "1.0.0",
+  "description": "Placemat mit Schuelern durchfuehren",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://stbaeumer@bitbucket.org/stbaeumer/placemat.git"
+  },
+  "author": "stbaeumer",
+  "license": "ISC",
+  "homepage": "https://bitbucket.org/stbaeumer/placemat#readme",
+  "dependencies": {
+    "express": "^4.16.4"
+  },
+  "devDependencies": {}
+}

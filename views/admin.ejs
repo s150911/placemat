@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="de">
+    <head>
+        <meta charset="UTF-8">
+        <title>BKB Placemat Admin</title>
+        <link rel="stylesheet" href="styles.css">
+        <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+        <link rel="manifest" href="/site.webmanifest">
+        <meta name="msapplication-TileColor" content="#da532c">
+        <meta name="theme-color" content="#ffffff">
+    </head>
+    <body>
+        <img src="/images/placemat.png" style="float:left; margin:0px 15px 15px 0px; cursor:pointer; cursor:hand; border:0" width="100" height="100" alt="Placemat" />
+        <h1>BKB Placemat</h1>
+        <h2><center>Admin</center></h2>
+        <form action="/admin" method="POST">
+            <h3>Titel des Themas eingeben:</h3>
+            <input type="text" name="tbxTitel" id="tbxTitel" placeholder="Titel" value="MeinPlacemat">
+            <h3>Anzahl der Gruppen eingeben:</h3>
+            <input type="number" name="tbxAnzahlGruppen" id="tbxAnzahlGruppen" placeholder="4" value="4">            
+            <h3>Dauer Think-Phase in Minuten:</h3>
+            <input type="number" name="tbxThink" id="tbxThink" placeholder="4" value="2">            
+            <h3>Dauer Pair-Phase in Minuten:</h3>
+            <input type="number" name="tbxPair" id="tbxPair" placeholder="4" value="3">            
+            <p></p>
+            <button id="btnButton">Absenden</button>            
+        </form>
+        <p><%= footnote %></p>
+        <p></p>
+        <p>&copy; 2018 Mein Name<br></p>        
+    </body>
+</html>
