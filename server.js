@@ -104,6 +104,7 @@ app.post('/', function(req,res){
                 anzeigen.push("THINK hat bereits begonnen.")
                 anzeigen.push("PAIR ab " + endeUhrzeitThink.toLocaleTimeString('de-DE') + " bei " + treffpunkt[gruppe - 1] + ".")
                 anzeigen.push("PAIR endet um " + endeUhrzeitPair.toLocaleTimeString('de-DE') + ".")                
+                anzeigen.push("Viel Erfolg :-)")                
                 res.render('index.ejs', {        
                     anzeigen: anzeigen                        
                 })        
@@ -143,8 +144,7 @@ app.get('/admin',function(req,res){
 
     con.query("SELECT titel from placemat ORDER BY nummer DESC LIMIT 1;", function(err, result1) {
         
-        con.query("SELECT * FROM placematUser WHERE titel = '" + result1[0][Object.keys(result1[0])[0]] + "'  ORDER BY gruppe;", function(err, result) {
-            console.log("dfsdfsdf" + err)
+        con.query("SELECT * FROM placematUser WHERE titel = '" + result1[0][Object.keys(result1[0])[0]] + "'  ORDER BY gruppe;", function(err, result) {            
             res.render('admin.ejs', {        
                 placematUser: result
             })
