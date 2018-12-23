@@ -1,8 +1,9 @@
 
 h1 {
-  font: 400 60px/1.5 Helvetica, Verdana, sans-serif;
-  color: #444; 
-  font-size: 500%;
+  width:90%;  
+  height: 20vw;     
+  font-size:13vw;  
+  color: #444;   
   margin: 0;
   padding: 0;
 }
@@ -32,8 +33,7 @@ li{
   color: #fff;
   border-radius: 5px;
   padding: 20px;
-  font-size:6vw;
-  margin:0 20px 20px 0; 
+  font-size:6vw;  
   vertical-align:top;
   width: 90%;  
 }
@@ -63,10 +63,10 @@ button:hover {
 }
 
 input{
-  width:90%;
-  border-radius: 5px;
+  width:90%;  
   height: 15vw;     
   font-size:10vw;
+  border-radius: 5px;
   color:rgb(190, 29, 50);
   display: block;
   margin-left: auto;
