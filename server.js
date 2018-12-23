@@ -20,21 +20,12 @@ var con = mysql.createConnection({
 })
 
 con.connect(function(err){
-
-    // Falls ein Verbindungsfehler auftritt, wird ein Fehler geworfen.
-
-    if (err) throw err
-
-    // Ansonsten wird der Erfolg geloggt:
-
-    console.log("Erfolgreich mit der Datenbank verbunden.")    
+    if (err) console.error(err)
 })
 
 app.get('/',function(req,res){    
-    
-    console.log("Webseite angefordert")    
-    
-    // Das zuletzt angelegte Placemat wird ausgelesen
+
+    console.log("Webseite angefordert")
 
     con.query("SELECT * from placemat ORDER BY nummer DESC LIMIT 1;", function(err, result1) {
     
@@ -52,7 +43,7 @@ app.get('/',function(req,res){
                 anzeigen: [anzeige]    
             })
         })
-    })
+    })    
 })
 
 app.post('/', function(req,res){    
@@ -73,8 +64,6 @@ app.post('/', function(req,res){
         let endeUhrzeitThink = result1[0][Object.keys(result1[0])[5]]
         let pair = result1[0][Object.keys(result1[0])[6]]
         let endeUhrzeitPair = result1[0][Object.keys(result1[0])[7]]
-        
-        let gruppe = 0
         
         // Die zuerst angemeldeten Schüler werden zum Anlaufpunkt für weitere Schüler.
 
@@ -105,9 +94,7 @@ app.post('/', function(req,res){
             
             // Wenn die Gruppe undefined ist, dann 
 
-            if(!treffpunkt[gruppe - 1]){
-                treffpunkt[gruppe - 1] = "Ihnen" 
-            }
+            if(!treffpunkt[gruppe - 1]){ treffpunkt[gruppe - 1] = "Ihnen" }
 
             console.log(gruppe + "-" + req.body.tbxName + "-" + titel + "-" + treffpunkt[gruppe - 1])
             
