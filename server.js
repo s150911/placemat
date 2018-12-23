@@ -31,16 +31,17 @@ app.get('/',function(req,res){
     
         con.query("SELECT TIMESTAMPDIFF(MINUTE, (SELECT zeitstempel from placemat ORDER BY nummer DESC LIMIT 1), now());", function(err, result) {
                 
-            let anzeige = "Es gibt kein aktives Placemat, dem Sie beitreten können."
-            
+            let anzeige = ["Es gibt kein aktives Placemat, dem Sie beitreten können."]
+                        
             // Nur wenn in den letzten 5 Minuten ein Placemat aufgelegt wurde und auch eines existiert ... 
 
             if(result[0][Object.keys(result[0])[0]] < 5 && result1[0][Object.keys(result1[0])[2]]){
                 
-                anzeige = "Jetzt dem Placemat " + result1[0][Object.keys(result1[0])[2]] + " beitreten!"                
+                anzeige = ["Neues Placemat: " + result1[0][Object.keys(result1[0])[2]], "Jetzt beitreten!"]                
+            
             }
             res.render('index.ejs', {        
-                anzeigen: [anzeige]    
+                anzeigen: anzeige
             })
         })
     })    
@@ -99,12 +100,10 @@ app.post('/', function(req,res){
             console.log(gruppe + "-" + req.body.tbxName + "-" + titel + "-" + treffpunkt[gruppe - 1])
             
             con.query("INSERT INTO placematuser(gruppe, name, titel) VALUES ('" + gruppe + "','" + req.body.tbxName + "','" + titel + "');", function (err, result) {
-                anzeigen.push(req.body.tbxName + ", Sie sind erfolgreich dem Placemat " + titel + " beigetreten.")                
-                anzeigen.push("Sie sind in Gruppe " + gruppe + ".")
-                anzeigen.push("Das Placemat beginnt um " + timestamp.toLocaleTimeString('de-DE') + ".")
-                anzeigen.push("THINK endet um " + endeUhrzeitThink.toLocaleTimeString('de-DE') + " (Dauer: " + think + " Minuten).")                
-                anzeigen.push("Nach der Think-Phase trifft sich Ihre Gruppe " + gruppe + " bei " + treffpunkt[gruppe - 1] + ".")
-                anzeigen.push("PAIR endet um " + endeUhrzeitPair.toLocaleTimeString('de-DE') + " (Dauer: " + pair + " Minuten).")                
+                anzeigen.push(req.body.tbxName + "! du bist in Gruppe" + gruppe +".")                                                
+                anzeigen.push("THINK hat bereits begonnen.")
+                anzeigen.push("PAIR ab " + endeUhrzeitThink.toLocaleTimeString('de-DE') + " bei " + treffpunkt[gruppe - 1] + ".")
+                anzeigen.push("PAIR endet um " + endeUhrzeitPair.toLocaleTimeString('de-DE') + ".")                
                 res.render('index.ejs', {        
                     anzeigen: anzeigen                        
                 })        
