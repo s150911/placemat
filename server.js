@@ -138,9 +138,18 @@ app.get('/admin',function(req,res){
         
         console.log("Tabelle 'placematUser' erfolgreich angelegt, bzw. schon vorhanden.");
     })
-    res.render('admin.ejs', {        
-        footnote: ""
-    })
+
+    // Das zuletzt angelegte Placemat wird selektiert
+
+    con.query("SELECT titel from placemat ORDER BY nummer DESC LIMIT 1;", function(err, result1) {
+        
+        con.query("SELECT * FROM placematUser WHERE titel = '" + result1[0][Object.keys(result1[0])[0]] + "'  ORDER BY gruppe;", function(err, result) {
+            console.log("dfsdfsdf" + err)
+            res.render('admin.ejs', {        
+                placematUser: result
+            })
+        })
+    })    
 })
 
 app.post('/admin', function(req,res){    
@@ -157,7 +166,7 @@ app.post('/admin', function(req,res){
                 
         console.log();                
         res.render('admin.ejs', {
-            footnote:footnote
+            placematUser: null
         })
     });
 })

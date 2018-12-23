@@ -24,10 +24,20 @@
                 <p>Dauer Pair-Phase in Minuten:</p>
                 <input type="number" name="tbxPair" id="tbxPair" placeholder="4" value="3">            
                 <p></p>
-                <button id="btnButton" background-color="green">Absenden</button>            
+                <button id="btnButton">Absenden</button>            
             </form>
-            <p><%= footnote %></p>        
-            <p>&copy; 2018 Mein Name<br></p>        
+            <p>&copy; 2018 GW11<br></p>        
+
+            <table border="1">
+                <tr>
+                    <td>Placemat</td><td>Gruppe</td><td>Name</td>
+                </tr>
+                <% if(placematUser){ %>                    
+                <% for(var i=0; i < placematUser.length; i++) {%>
+                    <tr><td><%- placematUser[i].titel %></td><td><%- placematUser[i].gruppe %></td><td><%- placematUser[i].name %></td></tr>
+                <% } %> 
+                <% } %> 
+            </table>            
         </section>
     </body>
 </html>
