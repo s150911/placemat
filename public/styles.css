@@ -4,7 +4,9 @@ html, body {
   font-family: Arial, Helvetica, sans-serif;  
 }
 body {  
-  background-image: url("images/sky.jpg");
+  background-image: url("images/sky.jpg"); 
+  background-repeat: no-repeat;
+  background-size: cover;  
 }
 section {
   box-sizing: border-box; /* or not */
