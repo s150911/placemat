@@ -86,11 +86,13 @@ app.post('/', function(req,res){
                 }                                
             }) 
 
-            if (gruppe % anzahlGruppen == 0){
-                console.log("Modulo: " + anzahlGruppen + "/" + gruppe + " : " + gruppe % anzahlGruppen)
+            console.log("Modulo: " + anzahlGruppen + "/" + gruppe + " : " + gruppe % anzahlGruppen)
+
+            if (gruppe % anzahlGruppen === 0){
+                
                 gruppe = 1
             }else{
-                gruppe = gruppe +1
+                gruppe = gruppe + 1
             }
             
             // Wenn die Gruppe undefined ist, dann 
