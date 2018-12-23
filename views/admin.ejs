@@ -11,28 +11,23 @@
         <meta name="msapplication-TileColor" content="#da532c">
         <meta name="theme-color" content="#ffffff">
     </head>
-    <body>
-        <h1>BKB Placemat<img src="/images/placemat.png"/></h1>    
+    <body>        
         <section>
-
+            <h2 class="full-width-borders"><img src="/images/placemat.png"/>BKB Placemat Admin</h2>                       
+            <form action="/admin" method="POST">
+                <p>Titel des Themas eingeben:</p>
+                <input type="text" name="tbxTitel" id="tbxTitel" placeholder="Titel" value="MeinPlacemat">
+                <p>Anzahl der Gruppen eingeben:</p>
+                <input type="number" name="tbxAnzahlGruppen" id="tbxAnzahlGruppen" placeholder="4" value="4">            
+                <p>Dauer Think-Phase in Minuten:</p>
+                <input type="number" name="tbxThink" id="tbxThink" placeholder="4" value="2">            
+                <p>Dauer Pair-Phase in Minuten:</p>
+                <input type="number" name="tbxPair" id="tbxPair" placeholder="4" value="3">            
+                <p></p>
+                <button id="btnButton" background-color="green">Absenden</button>            
+            </form>
+            <p><%= footnote %></p>        
+            <p>&copy; 2018 Mein Name<br></p>        
         </section>
-        <h2 class="full-width-borders"><img src="/images/placemat.png"/>Admin</h2>                       
-        <form action="/admin" method="POST">
-            <h3>Titel des Themas eingeben:</h3>
-            <input type="text" name="tbxTitel" id="tbxTitel" placeholder="Titel" value="MeinPlacemat">
-            <h3>Anzahl der Gruppen eingeben:</h3>
-            <input type="number" name="tbxAnzahlGruppen" id="tbxAnzahlGruppen" placeholder="4" value="4">            
-            <h3>Dauer Think-Phase in Minuten:</h3>
-            <input type="number" name="tbxThink" id="tbxThink" placeholder="4" value="2">            
-            <h3>Dauer Pair-Phase in Minuten:</h3>
-            <input type="number" name="tbxPair" id="tbxPair" placeholder="4" value="3">            
-            <p></p>
-            <button id="btnButton" background-color="green">Absenden</button>            
-        </form>
-        <p><%= footnote %></p>        
-        <p>&copy; 2018 Mein Name<br></p>        
-
-
-        <p> </p>
     </body>
 </html>

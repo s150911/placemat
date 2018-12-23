@@ -9,7 +9,7 @@ body {
 section {
   box-sizing: border-box; /* or not */
   margin: 0 auto;
-  width: 25rem;
+  width: 70%;
   background: white;
   padding: 1.5rem;
   padding-bottom: 4rem;
@@ -29,7 +29,7 @@ h2, .full-width-borders {
   font-size: 1.75rem;  
 }
 
-input[type=text], select {
+input {
   width: 100%;
   padding: 12px 20px;
   margin: 8px 0;
