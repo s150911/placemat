@@ -30,11 +30,11 @@
 
             <table border="1">
                 <tr>
-                    <td>Placemat</td><td>Gruppe</td><td>Name</td>
+                    <td>Placemat</td><td>Gruppe</td><td>Name</td><td>Treffpunkt</td>
                 </tr>
                 <% if(placematUser){ %>                    
                 <% for(var i=0; i < placematUser.length; i++) {%>
-                    <tr><td><%- placematUser[i].titel %></td><td><%- placematUser[i].gruppe %></td><td><%- placematUser[i].name %></td></tr>
+                    <tr><td><%- placematUser[i].titel %></td><td><%- placematUser[i].gruppe %></td><td><%- placematUser[i].name %></td><td><%- placematUser[i].treffpunkt %></td></tr>
                 <% } %> 
                 <% } %> 
             </table>            

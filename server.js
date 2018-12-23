@@ -37,8 +37,7 @@ app.get('/',function(req,res){
 
             if(result[0][Object.keys(result[0])[0]] < 5 && result1[0][Object.keys(result1[0])[2]]){
                 
-                anzeige = ["Neues Placemat: " + result1[0][Object.keys(result1[0])[2]], "Jetzt beitreten!"]                
-            
+                anzeige = ["Neues Placemat: " + result1[0][Object.keys(result1[0])[2]], "Jetzt beitreten!"]                            
             }
             res.render('index.ejs', {        
                 anzeigen: anzeige
@@ -70,10 +69,11 @@ app.post('/', function(req,res){
 
         // Eigenschaften aller User des Platzdeckchens ermitteln
 
+        let gruppe = 0
+
         con.query("SELECT * from placematuser WHERE titel='" + titel + "';", function(err, result) {
             
             let anzahl = 0
-            let gruppe = 0
             var treffpunkt = []
 
             Object.keys(result).forEach(function(key) {
@@ -95,11 +95,11 @@ app.post('/', function(req,res){
             
             // Wenn die Gruppe undefined ist, dann 
 
-            if(!treffpunkt[gruppe - 1]){ treffpunkt[gruppe - 1] = "Ihnen" }
+            if(!treffpunkt[gruppe - 1]){ treffpunkt[gruppe - 1] = req.body.tbxName }
 
-            console.log(gruppe + "-" + req.body.tbxName + "-" + titel + "-" + treffpunkt[gruppe - 1])
+            console.log("Gr:" + gruppe + "; Anz.Gr:" + anzahlGruppen + " Rest:" + gruppe % anzahlGruppen + "-" + req.body.tbxName + "-" + titel + "-" + treffpunkt[gruppe - 1])
             
-            con.query("INSERT INTO placematuser(gruppe, name, titel) VALUES ('" + gruppe + "','" + req.body.tbxName + "','" + titel + "');", function (err, result) {
+            con.query("INSERT INTO placematuser(gruppe, name, titel, treffpunkt) VALUES ('" + gruppe + "','" + req.body.tbxName + "','" + titel + "','" + treffpunkt[gruppe - 1] + "');", function (err, result) {
                 anzeigen.push(req.body.tbxName + "! du bist in Gruppe" + gruppe +".")                                                
                 anzeigen.push("THINK hat bereits begonnen.")
                 anzeigen.push("PAIR ab " + endeUhrzeitThink.toLocaleTimeString('de-DE') + " bei " + treffpunkt[gruppe - 1] + ".")
@@ -129,7 +129,7 @@ app.get('/admin',function(req,res){
         
         console.log("Tabelle 'placemat' erfolgreich angelegt, bzw. schon vorhanden.");
     })
-    con.query("CREATE TABLE IF NOT EXISTS placematUser(gruppe INT, name VARCHAR(50), titel VARCHAR(50), PRIMARY KEY(name,titel));", function (err, result) {
+    con.query("CREATE TABLE IF NOT EXISTS placematUser(gruppe INT, name VARCHAR(50), titel VARCHAR(50), treffpunkt VARCHAR(50), PRIMARY KEY(name,titel));", function (err, result) {
         
         if (err) {
             return console.error('error: ' + err.message);
@@ -143,12 +143,21 @@ app.get('/admin',function(req,res){
     // Das zuletzt angelegte Placemat wird selektiert
 
     con.query("SELECT titel from placemat ORDER BY nummer DESC LIMIT 1;", function(err, result1) {
-        
-        con.query("SELECT * FROM placematUser WHERE titel = '" + result1[0][Object.keys(result1[0])[0]] + "'  ORDER BY gruppe;", function(err, result) {            
+
+        if(!result1){                         
             res.render('admin.ejs', {        
-                placematUser: result
+                placematUser: null
             })
-        })
+        }else{
+            
+            console.log("ssdfsdfdsfsdsfsdf" + err)        
+            con.query("SELECT * FROM placematUser WHERE titel = '" + result1[0][Object.keys(result1[0])[0]] + "'  ORDER BY gruppe;", function(err, result) {            
+                
+                res.render('admin.ejs', {        
+                    placematUser: result
+                })
+            })
+        }        
     })    
 })
 
