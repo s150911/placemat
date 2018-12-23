@@ -38,7 +38,7 @@ input {
   border: 1px solid #ccc;
   border-radius: 4px;
   box-sizing: border-box;
-  font-size: 7vw;  
+  font-size: 5vw;  
 }
 
 button {
@@ -54,7 +54,7 @@ button {
 }
 
 p {
-  font-size: 7vw;  
+  font-size: 5vw;  
   text-align:center;
 }
 
