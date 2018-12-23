@@ -2,7 +2,6 @@ const mysql = require('mysql')
 const express = require('express')
 const bodyParser = require('body-parser')
 
-
 const app = express()
 
 app.set('view engine', 'ejs')
@@ -102,16 +101,14 @@ app.post('/', function(req,res){
             console.log(gruppe + "-" + req.body.tbxName + "-" + titel + "-" + treffpunkt[gruppe - 1])
             
             con.query("INSERT INTO placematuser(gruppe, name, titel) VALUES ('" + gruppe + "','" + req.body.tbxName + "','" + titel + "');", function (err, result) {
-                
                 anzeigen.push(req.body.tbxName + ", Sie sind erfolgreich dem Placemat " + titel + " beigetreten.")                
                 anzeigen.push("Sie sind in Gruppe " + gruppe + ".")
                 anzeigen.push("Das Placemat beginnt um " + timestamp.toLocaleTimeString('de-DE') + ".")
-                anzeigen.push("THINK endet um " + endeUhrzeitThink.toLocaleTimeString('de-DE') + " (Dauer: " + think + " Minuten).")
+                anzeigen.push("THINK endet um " + endeUhrzeitThink.toLocaleTimeString('de-DE') + " (Dauer: " + think + " Minuten).")                
                 anzeigen.push("Nach der Think-Phase trifft sich Ihre Gruppe " + gruppe + " bei " + treffpunkt[gruppe - 1] + ".")
-                anzeigen.push("PAIR endet um " + endeUhrzeitPair.toLocaleTimeString('de-DE') + " (Dauer: " + pair + " Minuten).")
-                
+                anzeigen.push("PAIR endet um " + endeUhrzeitPair.toLocaleTimeString('de-DE') + " (Dauer: " + pair + " Minuten).")                
                 res.render('index.ejs', {        
-                    anzeigen: anzeigen    
+                    anzeigen: anzeigen                        
                 })        
             })            
         })

@@ -11,15 +11,13 @@
         <meta name="msapplication-TileColor" content="#da532c">
         <meta name="theme-color" content="#ffffff">
     </head>
-    <body>
-        
-        <h1>BKB Placemat<img src="/images/placemat.png"/></h1>                
-       
+    <body>        
+        <h1>BKB Placemat<img src="/images/placemat.png"/></h1>                       
         <div id="list8">
             <ul>
                 <% for(var i=0; i < anzeigen.length; i++) {%>
-                    <li><%= anzeigen[i] %></li>
-                <% } %>   
+                    <li><%- anzeigen[i] %></li>                    
+                <% } %>                   
             </ul>
         </div>
         <form action="" method="POST">            
@@ -28,6 +26,6 @@
             <p></p>
             <button id="btnButton">Beitreten</button>
         </form>
-        <p>&copy; 2018 Mein Name</p>
+        <p>&copy; 2018 Mein Name</p>         
     </body>
 </html>
