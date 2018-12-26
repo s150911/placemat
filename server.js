@@ -1,12 +1,4 @@
-class PlacematUser {
-    constructor() {
-        this.name
-        this.gruppe
-        this.thema
-        this.treffpunkt
-    }
-}
-
+const { PlacematUser } = require("./PlacematUser");
 const mysql = require('mysql')
 const express = require('express')
 const bodyParser = require('body-parser')
@@ -33,22 +25,19 @@ app.get('/',(req,res) => {
 
         res.render('index.ejs', {        
 
-            anzeigen: ["Neues Placemat: " + rows[0].thema, "Jetzt beitreten!"]
+            anzeigen: [rows[0].thema, "Jetzt beitreten!"]
         })
     })    
 })
 
 app.post('/', (req,res) => {    
     dbVerbindung.query("SELECT * from placemat;", (err, rows, fields) => {
-        let placematUsers = []
-        let anzeigen = []        
+        let placematUsers = []   
         let thema = rows[0].thema        
         let anzahlGruppen = rows[0].anzahlGruppen
         let endeUhrzeitThink = rows[0].endeUhrzeitThink
         let endeUhrzeitPair = rows[0].endeUhrzeitPair
                
-        let gruppe = 0
-
         dbVerbindung.query("SELECT * from placematuser;", (err, rows, fileds) => {         
             if (err) throw err
             for (let row of rows) {                
@@ -56,14 +45,29 @@ app.post('/', (req,res) => {
                 placematUser.name = row.name
                 placematUser.gruppe = row.gruppe                
                 placematUser.treffpunkt = row.treffpunkt
+
+                if(row.name === req.body.tbxName){
+                    let anzeigen = []
+                    anzeigen.push("Hoppla, " + placematUser.name + "!")
+                    anzeigen.push("Es existiert bereits ein User mit diesem Namen!")
+                    anzeigen.push("Hier nochmal die Zugangsdaten für " + placematUser.name + ":")
+                    anzeigen.push("Du bist in der " + placematUser.gruppe + ". Gruppe ")
+                    anzeigen.push("THINK hat bereits begonnen.")
+                    anzeigen.push("PAIR ab " + ("0" + endeUhrzeitThink.getHours()).slice(-2) +":" + ("0" + endeUhrzeitThink.getMinutes()).slice(-2) + " Uhr bei " + placematUser.treffpunkt + ".")
+                    anzeigen.push("PAIR endet um " + ("0" + endeUhrzeitPair.getHours()).slice(-2) +":" + ("0" + endeUhrzeitPair.getMinutes()).slice(-2) + " Uhr.")                
+                    anzeigen.push("Viel Spaß :-)")  
+                    res.render('index.ejs', {        
+                        anzeigen: anzeigen
+                    }) 
+                    return
+                }
+
                 placematUsers.push(placematUser)
             }
 
             let placematUser = new PlacematUser()
             placematUser.name = req.body.tbxName
             placematUser.thema = thema
-
-            console.log("Rest:" + placematUsers.length % anzahlGruppen)
 
             if(placematUsers.length === 0 || !(placematUsers.length % anzahlGruppen)){        
                 placematUser.gruppe = 1
@@ -74,7 +78,6 @@ app.post('/', (req,res) => {
             if(anzahlGruppen > placematUsers.length){
                 placematUser.treffpunkt = placematUser.name
             }else{
-
                 for(i = 0; i < anzahlGruppen; i++){
                     if(placematUsers[i].gruppe === placematUser.gruppe){
                         placematUser.treffpunkt = placematUsers[i].treffpunkt
@@ -87,8 +90,8 @@ app.post('/', (req,res) => {
                 anzeigen.push("Hallo " + placematUser.name + "!")
                 anzeigen.push("Du bist in der " + placematUser.gruppe + ". Gruppe ")
                 anzeigen.push("THINK hat bereits begonnen.")
-                anzeigen.push("PAIR ab " + endeUhrzeitThink + " bei " + placematUser.treffpunkt + ".")
-                anzeigen.push("PAIR endet um " + endeUhrzeitPair + ".")                
+                anzeigen.push("PAIR ab " + ("0" + endeUhrzeitThink.getHours()).slice(-2) +":" + ("0" + endeUhrzeitThink.getMinutes()).slice(-2) + " Uhr bei " + placematUser.treffpunkt + ".")
+                anzeigen.push("PAIR endet um " + ("0" + endeUhrzeitPair.getHours()).slice(-2) +":" + ("0" + endeUhrzeitPair.getMinutes()).slice(-2) + " Uhr.")                
                 anzeigen.push("Viel Spaß :-)")                
                 res.render('index.ejs', {        
                     anzeigen: anzeigen                        
