@@ -1,7 +1,9 @@
+const { PlacematUser } = require("./PlacematUser");
 const express = require('express')
 const app = express()
 app.set('view engine', 'ejs')
 app.use(express.static('public'))
+const bodyParser = require('body-parser')
 app.use(bodyParser.urlencoded({extended: true}))
 const server = app.listen(process.env.PORT || 3000, () => {
     console.log('Server lauscht auf Port %s', server.address().port)    
@@ -12,9 +14,6 @@ const dbVerbindung = mysql.createConnection({
     host: "130.255.124.99", user: "placematman", password: "BKB123456!", database: "dbPlacemat"
 })
 dbVerbindung.connect()
-
-const bodyParser = require('body-parser')
-const { PlacematUser } = require("./PlacematUser");
 
 app.get('/',(req,res) => {    
     dbVerbindung.query("SELECT thema from placemat;", (err, rows, fields) => {        
