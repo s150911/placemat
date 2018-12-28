@@ -16,18 +16,21 @@ const dbVerbindung = mysql.createConnection({
     password: "BKB123456!", 
     database: "dbPlacemat"
 })
+
 dbVerbindung.connect()
 
-app.get('/',(req,res) => {    
-    dbVerbindung.query("SELECT thema from placemat;", (err, rows) => {        
+app.get('/',(req, res, next) => {    
+    dbVerbindung.query("SELECT thema from placemat;", (err, rows) => { 
+        if (err) return next(err)       
         res.render('index.ejs', {        
             anzeigen: [rows[0].thema, "Jetzt beitreten!"]
         })
     })    
 })
 
-app.post('/', (req,res) => {    
+app.post('/', (req, res, next) => {    
     dbVerbindung.query("SELECT * from placemat;", (err, rows) => {
+        if (err) return next(err)
         let placematUsers = []   
         let thema = rows[0].thema        
         let anzahlGruppen = rows[0].anzahlGruppen
@@ -35,7 +38,7 @@ app.post('/', (req,res) => {
         let endeUhrzeitPair = rows[0].endeUhrzeitPair
                
         dbVerbindung.query("SELECT * from placematuser;", (err, rows) => {         
-            if (err) throw err
+            if (err) return next(err)
             for (let row of rows) {                
                 let placematUser = new PlacematUser()
                 placematUser.name = row.name
@@ -70,6 +73,7 @@ app.post('/', (req,res) => {
             }
 
             dbVerbindung.query("INSERT INTO placematuser(gruppe, name, thema, treffpunkt) VALUES ('" + placematUser.gruppe + "','" + placematUser.name + "','" + placematUser.thema + "','" + placematUser.treffpunkt + "');", (err, result) => {
+                if (err) return next(err)
                 let anzeigen = ["Hallo " + placematUser.name + "!"]
                 anzeigen.push("Du bist in der " + placematUser.gruppe + ". Gruppe ") 
                 anzeigen.push("THINK hat bereits begonnen.") 
@@ -84,20 +88,16 @@ app.post('/', (req,res) => {
     })
 })
 
-app.get('/admin', (req,res) => {    
-        
-    dbVerbindung.query("CREATE TABLE IF NOT EXISTS placemat(nummer INT AUTO_INCREMENT, zeitstempel TIMESTAMP, thema VARCHAR(50), anzahlGruppen INT, dauerThink INT, endeUhrzeitThink DATETIME, dauerPair INT, endeUhrzeitPair DATETIME, PRIMARY KEY(nummer));", (err, result) => {
-        
-        if (err) throw err
+app.get('/admin', (req, res,next) => {    
+    
+    dbVerbindung.query("CREATE TABLE IF NOT EXISTS placemat(nummer INT AUTO_INCREMENT, zeitstempel TIMESTAMP, thema VARCHAR(50), anzahlGruppen INT, dauerThink INT, endeUhrzeitThink DATETIME, dauerPair INT, endeUhrzeitPair DATETIME, PRIMARY KEY(nummer));", (err) => {
+        if (err) return next(err)         
                 
         console.log("Tabelle 'placemat' erfolgreich angelegt, bzw. schon vorhanden.");
     })
 
-    dbVerbindung.query("CREATE TABLE IF NOT EXISTS placematUser(gruppe INT, name VARCHAR(50), thema VARCHAR(50), treffpunkt VARCHAR(50), PRIMARY KEY(name,thema));", (err, result) => {
-        
-        if (err) {
-            return console.error('error: ' + err.message);
-        }
+    dbVerbindung.query("CREATE TABLE IF NOT EXISTS placematUser(gruppe INT, name VARCHAR(50), thema VARCHAR(50), treffpunkt VARCHAR(50), PRIMARY KEY(name,thema));", (err) => {        
+        if (err) return next(err)         
         
         // Falls kein Fehler auftritt, wird der Erfolg geloggt.
         
@@ -106,15 +106,20 @@ app.get('/admin', (req,res) => {
 
     // Das zuletzt angelegte Placemat wird selektiert
 
-    dbVerbindung.query("SELECT thema from placemat;", (err, rows, fields) => {
-
+    dbVerbindung.query("SELECT thema from placemat;", (err, rows) => {
+        if (err) return next(err)         
         if(!rows.length){                
             res.render('admin.ejs', {        
+                thema: "Mein Placemat",
+                anzahlGruppen: 3,
+                dauerThink: 5,
+                dauerPair: 5,
+                absenden: "absenden",
                 placematUser: null
             })
         }else{                       
             dbVerbindung.query("SELECT * FROM placematUser WHERE thema = '" + rows[0].thema + "'  ORDER BY gruppe;", (err, result) => {            
-                
+                if (err) return next(err)
                 res.render('admin.ejs', {
                     thema: "Mein Placemat",
                     anzahlGruppen: 3,
@@ -125,22 +130,23 @@ app.get('/admin', (req,res) => {
                 })
             })
         }        
-    })    
+    })                
 })
 
-app.post('/admin', (req,res) => {    
+app.post('/admin', (req, res, next) => {    
     
     console.log("Admin-Button geklickt")
     
-    dbVerbindung.query("DELETE FROM placemat;", (err, result) => {        
-        if (err) throw err        
+    dbVerbindung.query("DELETE FROM placemat;", (err) => {        
+        if (err) return next(err)
     })
 
-    dbVerbindung.query("DELETE FROM placematUser;", (err, result) => {
-        if (err) throw err        
+    dbVerbindung.query("DELETE FROM placematUser;", (err) => {
+        if (err) return next(err)
     })
 
-    dbVerbindung.query("INSERT INTO placemat(thema, zeitstempel, anzahlGruppen, dauerThink, endeUhrzeitThink, dauerPair, endeUhrzeitPair) VALUES ('" + req.body.tbxThema + "', now(), '" + req.body.tbxAnzahlGruppen + "','" + req.body.tbxThink + "', ADDTIME(now(), '0:" + req.body.tbxThink + ":0'),'" + req.body.tbxPair + "', ADDTIME(now(), '0:" + (parseInt(req.body.tbxPair) + parseInt(req.body.tbxThink)) + ":0'));", (err, result) => {                     
+    dbVerbindung.query("INSERT INTO placemat(thema, zeitstempel, anzahlGruppen, dauerThink, endeUhrzeitThink, dauerPair, endeUhrzeitPair) VALUES ('" + req.body.tbxThema + "', now(), '" + req.body.tbxAnzahlGruppen + "','" + req.body.tbxThink + "', ADDTIME(now(), '0:" + req.body.tbxThink + ":0'),'" + req.body.tbxPair + "', ADDTIME(now(), '0:" + (parseInt(req.body.tbxPair) + parseInt(req.body.tbxThink)) + ":0'));", (err) => {                     
+        if (err) return next(err)
         res.render('admin.ejs', {
             thema: req.body.tbxThema,
             anzahlGruppen: req.body.tbxAnzahlGruppen,
@@ -149,5 +155,9 @@ app.post('/admin', (req,res) => {
             absenden: "ok",
             placematUser: null
         })
-    });
+    });    
 })
+
+app.use(function(err, res) {    
+    res.status(500).send('Something broke! ' + err.stack);
+});
