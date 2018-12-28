@@ -34,8 +34,9 @@ app.post('/', (req, res, next) => {
         let placematUsers = []   
         let thema = rows[0].thema        
         let anzahlGruppen = rows[0].anzahlGruppen
-        let endeUhrzeitThink = rows[0].endeUhrzeitThink
-        let endeUhrzeitPair = rows[0].endeUhrzeitPair
+        let endeUhrzeitNachdenken = rows[0].endeUhrzeitNachdenken
+        let endeUhrzeitVergleichen = rows[0].endeUhrzeitVergleichen
+        let endeUhrzeitKonsens = rows[0].endeUhrzeitKonsens
                
         dbVerbindung.query("SELECT * from placematuser;", (err, rows) => {         
             if (err) return next(err)
@@ -46,8 +47,16 @@ app.post('/', (req, res, next) => {
                 placematUser.treffpunkt = row.treffpunkt
 
                 if(row.name === req.body.tbxName){
-                    let anzeigen = ["Hoppla, " + placematUser.name + "!","Es existiert bereits ein User mit diesem Namen!","Hier nochmal die Zugangsdaten für " + placematUser.name + ":","Du bist in der " + placematUser.gruppe + ". Gruppe ", "THINK hat bereits begonnen.", "PAIR ab " + ("0" + endeUhrzeitThink.getHours()).slice(-2) +":" + ("0" + endeUhrzeitThink.getMinutes()).slice(-2) + " Uhr bei " + placematUser.treffpunkt + ".","PAIR endet um " + ("0" + endeUhrzeitPair.getHours()).slice(-2) +":" + ("0" + endeUhrzeitPair.getMinutes()).slice(-2) + " Uhr."]
-                    anzeigen.push("Viel Spaß :-)")  
+                    let anzeigen = ["Hoppla, " + placematUser.name + "!","Es existiert bereits ein User mit diesem Namen! Hier nochmal für Dich:"]
+                    anzeigen.push("Du bist in der " + placematUser.gruppe + ". Gruppe ") 
+                    anzeigen.push("Ab sofort:")
+                    anzeigen.push("NACHDENKEN UND SCHREIBEN: Du sollst über Dein Thema nachdenken und Notizen aufschreiben.") 
+                    anzeigen.push(("0" + endeUhrzeitNachdenken.getHours()).slice(-2) +":" + ("0" + endeUhrzeitNachdenken.getMinutes()).slice(-2) + " Uhr bei " + placematUser.treffpunkt + ":") 
+                    anzeigen.push("VERGLEICHEN: Du liest die Notizen derjenigen, die sich mit Dir bei " + placematUser.treffpunkt + " treffen.")
+                    anzeigen.push(("0" + endeUhrzeitVergleichen.getHours()).slice(-2) +":" + ("0" + endeUhrzeitVergleichen.getMinutes()).slice(-2) + " Uhr:") 
+                    anzeigen.push("TEILEN UND KONSENS FINDEN mit all denen, die sich mit Dir bei " + placematUser.treffpunkt + " eingefunden haben.")
+                    anzeigen.push(("0" + endeUhrzeitKonsens.getHours()).slice(-2) +":" + ("0" + endeUhrzeitKonsens.getMinutes()).slice(-2) + " Uhr:")
+                    anzeigen.push("PÄSENTATION. Viel Spaß :-)")  
                     res.render('index.ejs', {        
                         anzeigen: anzeigen
                     }) 
@@ -76,10 +85,14 @@ app.post('/', (req, res, next) => {
                 if (err) return next(err)
                 let anzeigen = ["Hallo " + placematUser.name + "!"]
                 anzeigen.push("Du bist in der " + placematUser.gruppe + ". Gruppe ") 
-                anzeigen.push("THINK hat bereits begonnen.") 
-                anzeigen.push("PAIR ab " + ("0" + endeUhrzeitThink.getHours()).slice(-2) +":" + ("0" + endeUhrzeitThink.getMinutes()).slice(-2) + " Uhr bei " + placematUser.treffpunkt + ".") 
-                anzeigen.push("PAIR endet um " + ("0" + endeUhrzeitPair.getHours()).slice(-2) +":" + ("0" + endeUhrzeitPair.getMinutes()).slice(-2) + " Uhr.") 
-                anzeigen.push("Viel Spaß :-)")                
+                anzeigen.push("Ab sofort:")
+                anzeigen.push("NACHDENKEN UND SCHREIBEN: Du sollst über Dein Thema nachdenken und Notizen aufschreiben.") 
+                anzeigen.push(("0" + endeUhrzeitNachdenken.getHours()).slice(-2) +":" + ("0" + endeUhrzeitNachdenken.getMinutes()).slice(-2) + " Uhr bei " + placematUser.treffpunkt + ":") 
+                anzeigen.push("VERGLEICHEN: Du liest die Notizen derjenigen, die sich mit Dir bei " + placematUser.treffpunkt + " treffen.")
+                anzeigen.push(("0" + endeUhrzeitVergleichen.getHours()).slice(-2) +":" + ("0" + endeUhrzeitVergleichen.getMinutes()).slice(-2) + " Uhr:") 
+                anzeigen.push("TEILEN UND KONSENS FINDEN mit all denen, die sich mit Dir bei " + placematUser.treffpunkt + " eingefunden haben.")
+                anzeigen.push(("0" + endeUhrzeitKonsens.getHours()).slice(-2) +":" + ("0" + endeUhrzeitKonsens.getMinutes()).slice(-2) + " Uhr:")
+                anzeigen.push("PÄSENTATION. Viel Spaß :-)")                
                 res.render('index.ejs', {        
                     anzeigen: anzeigen                        
                 })        
@@ -90,7 +103,7 @@ app.post('/', (req, res, next) => {
 
 app.get('/admin', (req, res,next) => {    
     
-    dbVerbindung.query("CREATE TABLE IF NOT EXISTS placemat(nummer INT AUTO_INCREMENT, zeitstempel TIMESTAMP, thema VARCHAR(50), anzahlGruppen INT, dauerThink INT, endeUhrzeitThink DATETIME, dauerPair INT, endeUhrzeitPair DATETIME, PRIMARY KEY(nummer));", (err) => {
+    dbVerbindung.query("CREATE TABLE IF NOT EXISTS placemat(nummer INT AUTO_INCREMENT, zeitstempel TIMESTAMP, thema VARCHAR(50), anzahlGruppen INT, dauerNachdenken INT, endeUhrzeitNachdenken DATETIME, dauerVergleichen INT, endeUhrzeitVergleichen DATETIME, dauerKonsens INT, endeUhrzeitKonsens DATETIME, PRIMARY KEY(nummer));", (err) => {
         if (err) return next(err)         
                 
         console.log("Tabelle 'placemat' erfolgreich angelegt, bzw. schon vorhanden.");
@@ -112,8 +125,9 @@ app.get('/admin', (req, res,next) => {
             res.render('admin.ejs', {        
                 thema: "Mein Placemat",
                 anzahlGruppen: 3,
-                dauerThink: 5,
-                dauerPair: 5,
+                dauerNachdenken: 5,
+                dauerVergleichen: 5,
+                dauerKonsens: 5,
                 absenden: "absenden",
                 placematUser: null
             })
@@ -123,8 +137,9 @@ app.get('/admin', (req, res,next) => {
                 res.render('admin.ejs', {
                     thema: "Mein Placemat",
                     anzahlGruppen: 3,
-                    dauerThink: 5,
-                    dauerPair: 5,
+                    dauerNachdenken: 5,
+                    dauerVergleichen: 5,
+                    dauerKonsens: 5,
                     absenden: "absenden",
                     placematUser: result
                 })
@@ -145,13 +160,14 @@ app.post('/admin', (req, res, next) => {
         if (err) return next(err)
     })
 
-    dbVerbindung.query("INSERT INTO placemat(thema, zeitstempel, anzahlGruppen, dauerThink, endeUhrzeitThink, dauerPair, endeUhrzeitPair) VALUES ('" + req.body.tbxThema + "', now(), '" + req.body.tbxAnzahlGruppen + "','" + req.body.tbxThink + "', ADDTIME(now(), '0:" + req.body.tbxThink + ":0'),'" + req.body.tbxPair + "', ADDTIME(now(), '0:" + (parseInt(req.body.tbxPair) + parseInt(req.body.tbxThink)) + ":0'));", (err) => {                     
+    dbVerbindung.query("INSERT INTO placemat(thema, zeitstempel, anzahlGruppen, dauerNachdenken, endeUhrzeitNachdenken, dauerVergleichen, endeUhrzeitVergleichen, dauerKonsens, endeUhrzeitKonsens) VALUES ('" + req.body.tbxThema + "', now(), '" + req.body.tbxAnzahlGruppen + "','" + req.body.tbxNachdenken + "', ADDTIME(now(), '0:" + req.body.tbxNachdenken + ":0'),'" + req.body.tbxVergleichen + "', ADDTIME(now(), '0:" + (parseInt(req.body.tbxVergleichen) + parseInt(req.body.tbxNachdenken)) + ":0'),'" + req.body.tbxKonsens + "', ADDTIME(now(), '0:" + (parseInt(req.body.tbxVergleichen) + parseInt(req.body.tbxNachdenken) + parseInt(req.body.tbxKonsens)) + ":0'));", (err) => {                     
         if (err) return next(err)
         res.render('admin.ejs', {
             thema: req.body.tbxThema,
             anzahlGruppen: req.body.tbxAnzahlGruppen,
-            dauerThink: req.body.tbxThink,
-            dauerPair: req.body.tbxPair,
+            dauerNachdenken: req.body.tbxNachdenken,
+            dauerVergleichen: req.body.tbxVergleichen,
+            dauerKonsens: req.body.tbxKonsens,
             absenden: "ok",
             placematUser: null
         })
@@ -159,5 +175,5 @@ app.post('/admin', (req, res, next) => {
 })
 
 app.use(function(err, res) {    
-    res.status(500).send('Something broke! ' + err.stack);
+    res.status(500).send('Es ist etwas schiefgegagenen. Hier die Fehlermeldung: ' + err.stack);
 });

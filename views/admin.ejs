@@ -19,10 +19,12 @@
                 <input type="text" name="tbxThema" id="tbxThema" value="<%= thema%>">
                 <p>Anzahl der Gruppen eingeben:</p>
                 <input type="number" name="tbxAnzahlGruppen" id="tbxAnzahlGruppen" value="<%= anzahlGruppen%>">            
-                <p>Dauer Think-Phase in Minuten:</p>
-                <input type="number" name="tbxThink" id="tbxThink" value="<%= dauerThink%>">            
-                <p>Dauer Pair-Phase in Minuten:</p>
-                <input type="number" name="tbxPair" id="tbxPair" value="<%= dauerPair%>">            
+                <p>Nachdenken und Schreiben: Jeder notiert in seinem Segment eigene Gedanken zu der Hauptfrage (Dauer etwa fünf Minuten):</p>
+                <input type="number" name="tbxNachdenken" id="tbxNachdenken" value="<%= dauerNachdenken%>">            
+                <p>Stummes Vergleichen: Jeder liest die Notizen der anderen und stellt nur Rückfragen bei Verständnisproblemen oder Leseschwierigkeiten (Dauer etwa fünf Minuten):</p>
+                <input type="number" name="tbxVergleichen" id="tbxVergleichen" value="<%= dauerVergleichen%>">            
+                <p>Teilen und Konsens finden: Die Gruppe entscheidet gemeinsam, welche der genannten Gedanken in die Mitte des Blattes geschrieben werden. Hilfreich ist eine Begrenzung, etwa „Einigt euch auf fünf Hauptpunkte.“ Diese Hauptpunkte können dann auch noch priorisiert werden. (Dauer etwa zehn Minuten):</p>
+                <input type="number" name="tbxKonsens" id="tbxKonsens" value="<%= dauerKonsens%>">            
                 <p></p>
                 <button id="btnButton"><%= absenden%></button>        
             </form>
