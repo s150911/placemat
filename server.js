@@ -118,12 +118,19 @@ app.get('/admin', (req, res,next) => {
     })
 
     // Das zuletzt angelegte Placemat wird selektiert
-
-    dbVerbindung.query("SELECT thema from placemat;", (err, rows) => {
+    
+    dbVerbindung.query("SELECT * from placemat;", (err, rows) => {
         if (err) return next(err)         
-        if(!rows.length){                
+
+        // Wenn es kein Placemat gibt:
+
+        if(!rows.length){      
+            
+            console.log("Standardwerte anzeigen, weil es noch kein Placemat gibt")
+            
             res.render('admin.ejs', {        
-                thema: "Mein Placemat",
+                anzeigen: [],
+                thema: "Mein Platzdeckchen",
                 anzahlGruppen: 3,
                 dauerNachdenken: 5,
                 dauerVergleichen: 5,
@@ -132,15 +139,32 @@ app.get('/admin', (req, res,next) => {
                 placematUser: null
             })
         }else{                       
+
+            let endeUhrzeitNachdenken = rows[0].endeUhrzeitNachdenken
+            let endeUhrzeitVergleichen = rows[0].endeUhrzeitVergleichen
+            let endeUhrzeitKonsens = rows[0].endeUhrzeitKonsens
+
             dbVerbindung.query("SELECT * FROM placematUser WHERE thema = '" + rows[0].thema + "'  ORDER BY gruppe;", (err, result) => {            
                 if (err) return next(err)
+                
+                let anzeigen = []            
+                anzeigen.push("Ab sofort:")
+                anzeigen.push("NACHDENKEN UND SCHREIBEN: Jeder soll über sein Thema nachdenken und Notizen aufschreiben.") 
+                anzeigen.push(("0" + endeUhrzeitNachdenken.getHours()).slice(-2) +":" + ("0" + endeUhrzeitNachdenken.getMinutes()).slice(-2) + " Uhr in der jeweiliegn Gruppe:") 
+                anzeigen.push("VERGLEICHEN: Jeder liest die Notizen derjenigen, die mit ihr / ihm in der Gruppe sind.")
+                anzeigen.push(("0" + endeUhrzeitVergleichen.getHours()).slice(-2) +":" + ("0" + endeUhrzeitVergleichen.getMinutes()).slice(-2) + " Uhr:") 
+                anzeigen.push("TEILEN UND KONSENS FINDEN mit all denen, die mit ihr / ihm in der Gruppe sind")
+                anzeigen.push(("0" + endeUhrzeitKonsens.getHours()).slice(-2) +":" + ("0" + endeUhrzeitKonsens.getMinutes()).slice(-2) + " Uhr:")
+                anzeigen.push("PÄSENTATION.") 
+
                 res.render('admin.ejs', {
-                    thema: "Mein Placemat",
-                    anzahlGruppen: 3,
-                    dauerNachdenken: 5,
-                    dauerVergleichen: 5,
-                    dauerKonsens: 5,
-                    absenden: "absenden",
+                    anzeigen: anzeigen,
+                    thema: rows[0].thema,
+                    anzahlGruppen: rows[0].anzahlGruppen,
+                    dauerNachdenken: rows[0].dauerNachdenken,
+                    dauerVergleichen: rows[0].dauerVergleichen,
+                    dauerKonsens: rows[0].dauerKonsens,
+                    absenden: "Placemat aktiv!",
                     placematUser: result
                 })
             })
@@ -162,13 +186,15 @@ app.post('/admin', (req, res, next) => {
 
     dbVerbindung.query("INSERT INTO placemat(thema, zeitstempel, anzahlGruppen, dauerNachdenken, endeUhrzeitNachdenken, dauerVergleichen, endeUhrzeitVergleichen, dauerKonsens, endeUhrzeitKonsens) VALUES ('" + req.body.tbxThema + "', now(), '" + req.body.tbxAnzahlGruppen + "','" + req.body.tbxNachdenken + "', ADDTIME(now(), '0:" + req.body.tbxNachdenken + ":0'),'" + req.body.tbxVergleichen + "', ADDTIME(now(), '0:" + (parseInt(req.body.tbxVergleichen) + parseInt(req.body.tbxNachdenken)) + ":0'),'" + req.body.tbxKonsens + "', ADDTIME(now(), '0:" + (parseInt(req.body.tbxVergleichen) + parseInt(req.body.tbxNachdenken) + parseInt(req.body.tbxKonsens)) + ":0'));", (err) => {                     
         if (err) return next(err)
-        res.render('admin.ejs', {
+
+        res.render('admin.ejs', {            
+            anzeigen: [],
             thema: req.body.tbxThema,
             anzahlGruppen: req.body.tbxAnzahlGruppen,
             dauerNachdenken: req.body.tbxNachdenken,
             dauerVergleichen: req.body.tbxVergleichen,
             dauerKonsens: req.body.tbxKonsens,
-            absenden: "ok",
+            absenden: "Platzdeckchen aktiv!",
             placematUser: null
         })
     });    
