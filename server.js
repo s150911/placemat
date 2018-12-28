@@ -157,6 +157,8 @@ app.get('/admin', (req, res,next) => {
                 anzeigen.push(("0" + endeUhrzeitKonsens.getHours()).slice(-2) +":" + ("0" + endeUhrzeitKonsens.getMinutes()).slice(-2) + " Uhr:")
                 anzeigen.push("PÄSENTATION.") 
 
+                console.log(rows[0].thema)
+
                 res.render('admin.ejs', {
                     anzeigen: anzeigen,
                     thema: rows[0].thema,
