@@ -14,20 +14,20 @@
     <body>        
         <section>
             <h2 class="full-width-borders"><img src="/images/placemat.png"/>BKB Placemat Admin</h2>                       
+            <% if(placematUser){ %>                    
             <table border="1">
             <tr>
                 <td>Gruppe</td><td>Name</td><td>Treffpunkt</td>
-            </tr>
-            <% if(placematUser){ %>                    
+            </tr>            
             <% for(var i=0; i < placematUser.length; i++) {%>
                 <tr><td><%- placematUser[i].gruppe %></td><td><%- placematUser[i].name %></td><td><%- placematUser[i].treffpunkt %></td></tr>
             <% } %> 
-            <% } %> 
-        </table>                        
+            
+                </table>                        
             <% for(var i=0; i < anzeigen.length; i++) {%>
                 <p><%- anzeigen[i] %></p><hr>                    
             <% } %>                   
-
+            <% } %> 
             <form action="/admin" method="POST">
                 <p>Thema eingeben:</p>
                 <input type="text" name="tbxThema" id="tbxThema" value="<%= thema%>">
