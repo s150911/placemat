@@ -14,7 +14,7 @@
         <script>
             var now = new Date();                        
             var audio = new Audio('notify.mp3');            
-            var millisTill10 = new Date(now.getFullYear(), now.getMonth(), now.getDate(), '<%= stunde%>', '<%= minute%>', 0, 0) - now;
+            var millisTill10 = new Date(now.getFullYear(), now.getMonth(), now.getDate(), '<%= endeUhrzeitNachdenken.getHours() %>', '<%= endeUhrzeitNachdenken.getMinutes() %>', 0, 0) - now;
             if (millisTill10 < 0) {
                 millisTill10 += 86400000; // it's after 10am, try 10am tomorrow.
             }
@@ -25,7 +25,7 @@
     <body>
         <section>                                
             <h2 class="full-width-borders"><img src="/images/placemat.png"/>BKB Placemat</h2>                       
-            <p><%= stunde%></p>
+            <p><%= endeUhrzeitNachdenken.getHours() %>:<%= endeUhrzeitNachdenken.getMinutes() %></p>
             <% for(var i=0; i < anzeigen.length; i++) {%>
                 <p><%- anzeigen[i] %></p><hr>                    
             <% } %>                   

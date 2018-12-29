@@ -23,7 +23,7 @@ app.get('/',(req, res, next) => {
     dbVerbindung.query("SELECT thema from placemat;", (err, rows) => { 
         if (err) return next(err)       
         res.render('index.ejs', {        
-            endeUhrzeitNachdenken: null,
+            endeUhrzeitNachdenken: new Date(),
             anzeigen: [rows[0].thema, "Jetzt beitreten!"],
             stunde: 18,
             minute: 50
@@ -101,7 +101,6 @@ app.post('/', (req, res, next) => {
                     endeUhrzeitNachdenken: endeUhrzeitNachdenken,
                     stunde: 18,
                     minute: 60
-
                 })        
             })    
         })
