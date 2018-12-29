@@ -23,7 +23,10 @@ app.get('/',(req, res, next) => {
     dbVerbindung.query("SELECT thema from placemat;", (err, rows) => { 
         if (err) return next(err)       
         res.render('index.ejs', {        
-            anzeigen: [rows[0].thema, "Jetzt beitreten!"]
+            endeUhrzeitNachdenken: null,
+            anzeigen: [rows[0].thema, "Jetzt beitreten!"],
+            stunde: 18,
+            minute: 50
         })
     })    
 })
@@ -53,9 +56,9 @@ app.post('/', (req, res, next) => {
                     anzeigen.push("NACHDENKEN UND SCHREIBEN: Du sollst über Dein Thema nachdenken und Notizen aufschreiben.") 
                     anzeigen.push(("0" + endeUhrzeitNachdenken.getHours()).slice(-2) +":" + ("0" + endeUhrzeitNachdenken.getMinutes()).slice(-2) + " Uhr bei " + placematUser.treffpunkt + ":") 
                     anzeigen.push("VERGLEICHEN: Du liest die Notizen derjenigen, die sich mit Dir bei " + placematUser.treffpunkt + " treffen.")
-                    anzeigen.push(("0" + endeUhrzeitVergleichen.getHours()).slice(-2) +":" + ("0" + endeUhrzeitVergleichen.getMinutes()).slice(-2) + " Uhr:") 
+                    anzeigen.push(("0" + endeUhrzeitVergleichen.getHours()).slice(-2) +":" + ("0" + endeUhrzeitVergleichen.getMinutes()).slice(-2) + " Uhr bei " + placematUser.treffpunkt + ":") 
                     anzeigen.push("TEILEN UND KONSENS FINDEN mit all denen, die sich mit Dir bei " + placematUser.treffpunkt + " eingefunden haben.")
-                    anzeigen.push(("0" + endeUhrzeitKonsens.getHours()).slice(-2) +":" + ("0" + endeUhrzeitKonsens.getMinutes()).slice(-2) + " Uhr:")
+                    anzeigen.push(("0" + endeUhrzeitKonsens.getHours()).slice(-2) +":" + ("0" + endeUhrzeitKonsens.getMinutes()).slice(-2) + " Uhr im Plenum:")
                     anzeigen.push("PÄSENTATION. Viel Spaß :-)")  
                     res.render('index.ejs', {        
                         anzeigen: anzeigen
@@ -89,12 +92,16 @@ app.post('/', (req, res, next) => {
                 anzeigen.push("NACHDENKEN UND SCHREIBEN: Du sollst über Dein Thema nachdenken und Notizen aufschreiben.") 
                 anzeigen.push(("0" + endeUhrzeitNachdenken.getHours()).slice(-2) +":" + ("0" + endeUhrzeitNachdenken.getMinutes()).slice(-2) + " Uhr bei " + placematUser.treffpunkt + ":") 
                 anzeigen.push("VERGLEICHEN: Du liest die Notizen derjenigen, die sich mit Dir bei " + placematUser.treffpunkt + " treffen.")
-                anzeigen.push(("0" + endeUhrzeitVergleichen.getHours()).slice(-2) +":" + ("0" + endeUhrzeitVergleichen.getMinutes()).slice(-2) + " Uhr:") 
+                anzeigen.push(("0" + endeUhrzeitVergleichen.getHours()).slice(-2) +":" + ("0" + endeUhrzeitVergleichen.getMinutes()).slice(-2) + " Uhr " + placematUser.treffpunkt + ":") 
                 anzeigen.push("TEILEN UND KONSENS FINDEN mit all denen, die sich mit Dir bei " + placematUser.treffpunkt + " eingefunden haben.")
-                anzeigen.push(("0" + endeUhrzeitKonsens.getHours()).slice(-2) +":" + ("0" + endeUhrzeitKonsens.getMinutes()).slice(-2) + " Uhr:")
+                anzeigen.push(("0" + endeUhrzeitKonsens.getHours()).slice(-2) +":" + ("0" + endeUhrzeitKonsens.getMinutes()).slice(-2) + " Uhr im Plenum:")
                 anzeigen.push("PÄSENTATION. Viel Spaß :-)")                
                 res.render('index.ejs', {        
-                    anzeigen: anzeigen                        
+                    anzeigen: anzeigen,    
+                    endeUhrzeitNachdenken: endeUhrzeitNachdenken,
+                    stunde: 18,
+                    minute: 60
+
                 })        
             })    
         })

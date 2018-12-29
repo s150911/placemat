@@ -10,11 +10,22 @@
         <link rel="manifest" href="/site.webmanifest">
         <meta name="msapplication-TileColor" content="#da532c">
         <meta name="theme-color" content="#ffffff">
+                
+        <script>
+            var now = new Date();                        
+            var audio = new Audio('notify.mp3');            
+            var millisTill10 = new Date(now.getFullYear(), now.getMonth(), now.getDate(), '<%= stunde%>', '<%= minute%>', 0, 0) - now;
+            if (millisTill10 < 0) {
+                millisTill10 += 86400000; // it's after 10am, try 10am tomorrow.
+            }
+            setTimeout(function(){audio.play();}, millisTill10);            
+            setTimeout(function(){alert("It's 10am!");}, millisTill10);            
+        </script>
     </head>
     <body>
-        <section>                
+        <section>                                
             <h2 class="full-width-borders"><img src="/images/placemat.png"/>BKB Placemat</h2>                       
-            
+            <p><%= stunde%></p>
             <% for(var i=0; i < anzeigen.length; i++) {%>
                 <p><%- anzeigen[i] %></p><hr>                    
             <% } %>                   
