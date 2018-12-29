@@ -22,11 +22,11 @@ dbVerbindung.connect()
 app.get('/',(req, res, next) => {    
     dbVerbindung.query("SELECT thema from placemat;", (err, rows) => { 
         if (err) return next(err)       
-        res.render('index.ejs', {        
-            endeUhrzeitNachdenken: new Date(),
+        res.render('index.ejs', {                    
             anzeigen: [rows[0].thema, "Jetzt beitreten!"],
-            stunde: 18,
-            minute: 50
+            endeUhrzeitNachdenken: new Date(),
+            endeUhrzeitVergleichen: new Date(),
+            endeUhrzeitKonsens: new Date()       
         })
     })    
 })
@@ -61,7 +61,10 @@ app.post('/', (req, res, next) => {
                     anzeigen.push(("0" + endeUhrzeitKonsens.getHours()).slice(-2) +":" + ("0" + endeUhrzeitKonsens.getMinutes()).slice(-2) + " Uhr im Plenum:")
                     anzeigen.push("PÄSENTATION. Viel Spaß :-)")  
                     res.render('index.ejs', {        
-                        anzeigen: anzeigen
+                        anzeigen: anzeigen,
+                        endeUhrzeitNachdenken: endeUhrzeitNachdenken,
+                        endeUhrzeitVergleichen: endeUhrzeitVergleichen,
+                        endeUhrzeitKonsens: endeUhrzeitKonsens       
                     }) 
                     return
                 }
@@ -99,8 +102,8 @@ app.post('/', (req, res, next) => {
                 res.render('index.ejs', {        
                     anzeigen: anzeigen,    
                     endeUhrzeitNachdenken: endeUhrzeitNachdenken,
-                    stunde: 18,
-                    minute: 60
+                    endeUhrzeitVergleichen: endeUhrzeitVergleichen,
+                    endeUhrzeitKonsens: endeUhrzeitKonsens       
                 })        
             })    
         })

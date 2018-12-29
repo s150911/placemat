@@ -12,20 +12,25 @@
         <meta name="theme-color" content="#ffffff">
                 
         <script>
-            var now = new Date();                        
-            var audio = new Audio('notify.mp3');            
-            var millisTill10 = new Date(now.getFullYear(), now.getMonth(), now.getDate(), '<%= endeUhrzeitNachdenken.getHours() %>', '<%= endeUhrzeitNachdenken.getMinutes() %>', 0, 0) - now;
-            if (millisTill10 < 0) {
-                millisTill10 += 86400000; // it's after 10am, try 10am tomorrow.
+            function timer(stunde, minute, sekunde, message){
+                var now = new Date();                        
+                var audio = new Audio('notify.mp3');            
+                var millisTill10 = new Date(now.getFullYear(), now.getMonth(), now.getDate(), stunde, minute, sekunde, 0) - now;
+                if (millisTill10 < 0) {
+                    millisTill10 += 86400000; // it's after 10am, try 10am tomorrow.
+                }
+                setTimeout(function(){audio.play();}, millisTill10);            
+                setTimeout(function(){alert(message);}, millisTill10);            
             }
-            setTimeout(function(){audio.play();}, millisTill10);            
-            setTimeout(function(){alert("It's 10am!");}, millisTill10);            
+            timer("<%= endeUhrzeitNachdenken.getHours() %>","<%= endeUhrzeitNachdenken.getMinutes() %>","<%= endeUhrzeitNachdenken.getSeconds() %>","Nachdenken ist jetzt vorbei ...")
+            timer("<%= endeUhrzeitVergleichen.getHours() %>","<%= endeUhrzeitVergleichen.getMinutes() %>","<%= endeUhrzeitVergleichen.getSeconds() %>","Vergleichen ist jetzt vorbei ...")
+            timer("<%= endeUhrzeitKonsens.getHours() %>","<%= endeUhrzeitKonsens.getMinutes() %>","<%= endeUhrzeitKonsens.getSeconds() %>","Konsens ist jetzt vorbei ...")
         </script>
     </head>
     <body>
         <section>                                
             <h2 class="full-width-borders"><img src="/images/placemat.png"/>BKB Placemat</h2>                       
-            <p><%= endeUhrzeitNachdenken.getHours() %>:<%= endeUhrzeitNachdenken.getMinutes() %></p>
+            
             <% for(var i=0; i < anzeigen.length; i++) {%>
                 <p><%- anzeigen[i] %></p><hr>                    
             <% } %>                   
