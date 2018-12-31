@@ -24,12 +24,10 @@
                 <tr><td><%- placematUser[i].gruppe %></td><td><%- placematUser[i].name %></td><td><%- placematUser[i].treffpunkt %></td></tr>
             <% } %> 
             
-                </table>  
-                <hr class="adminHr">                      
+                </table>              
             <% for(var i=0; i < anzeigen.length; i++) {%>
-                <p class="admin"><%- anzeigen[i] %></p><hr>                    
-            <% } %>
-            <hr class="adminHr">                                         
+                <p><%- anzeigen[i] %></p><hr>                    
+            <% } %>                                                
             <% } %> 
             <form action="/admin" method="POST">
                 <p class="admin">Thema eingeben:</p>

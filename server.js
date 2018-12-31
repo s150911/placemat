@@ -42,6 +42,7 @@ app.get('/',(req, res, next) => {
 })
 
 app.post('/', (req, res, next) => {    
+    
     dbVerbindung.query("SELECT * from placemat;", (err, rows) => {
         if (err) return next(err)
         let placematUsers = []   
@@ -60,8 +61,8 @@ app.post('/', (req, res, next) => {
                 placematUser.treffpunkt = row.treffpunkt
 
                 if(row.name === req.body.tbxName){
-                    let anzeigen = ["Hoppla, " + placematUser.name + "!","Es existiert bereits ein User mit diesem Namen! Hier nochmal für Dich:"]
-                    anzeigen.push("Du bist in der " + placematUser.gruppe + ". Gruppe ") 
+                    let anzeigen = [placematUser.name + ", Du bist bereits angemeldet."]                    
+                    anzeigen.push("Hier nochmal für Dich:")
                     anzeigen.push("Ab sofort:")
                     anzeigen.push("NACHDENKEN UND SCHREIBEN: Du sollst über Dein Thema nachdenken und Notizen aufschreiben.") 
                     anzeigen.push(("0" + endeUhrzeitNachdenken.getHours()).slice(-2) +":" + ("0" + endeUhrzeitNachdenken.getMinutes()).slice(-2) + " Uhr bei " + placematUser.treffpunkt + ":") 
@@ -121,7 +122,6 @@ app.post('/', (req, res, next) => {
 })
 
 app.get('/admin', (req, res,next) => {    
-    
     dbVerbindung.query("CREATE TABLE IF NOT EXISTS placemat(nummer INT AUTO_INCREMENT, zeitstempel TIMESTAMP, thema VARCHAR(50), anzahlGruppen INT, dauerNachdenken INT, endeUhrzeitNachdenken DATETIME, dauerVergleichen INT, endeUhrzeitVergleichen DATETIME, dauerKonsens INT, endeUhrzeitKonsens DATETIME, PRIMARY KEY(nummer));", (err) => {
         if (err) return next(err)         
                 
@@ -205,21 +205,18 @@ app.post('/admin', (req, res, next) => {
     
     console.log("Admin-Button geklickt")
     
-    dbVerbindung.query("DELETE FROM placemat;", (err) => {        
-        if (err) return next(err)
-    })
-
-    dbVerbindung.query("DELETE FROM placematUser;", (err) => {
-        if (err) return next(err)
-    })
-
     dbVerbindung.query("SELECT COUNT(*) AS anzahl FROM users WHERE (username = '" + req.body.tbxUsername + "') AND (password = '" + req.body.tbxPassword + "');", (err,rows) => {                     
-        
         if (err) return next(err)
-   
+
         if (rows[0].anzahl === 1){
-   
-            console.log(rows[0].anzahl)
+
+            dbVerbindung.query("DELETE FROM placemat;", (err) => {        
+                if (err) return next(err)
+            })
+        
+            dbVerbindung.query("DELETE FROM placematUser;", (err) => {
+                if (err) return next(err)
+            })
 
             dbVerbindung.query("INSERT INTO placemat(thema, zeitstempel, anzahlGruppen, dauerNachdenken, endeUhrzeitNachdenken, dauerVergleichen, endeUhrzeitVergleichen, dauerKonsens, endeUhrzeitKonsens) VALUES ('" + req.body.tbxThema + "', now(), '" + req.body.tbxAnzahlGruppen + "','" + req.body.tbxNachdenken + "', ADDTIME(now(), '0:" + req.body.tbxNachdenken + ":0'),'" + req.body.tbxVergleichen + "', ADDTIME(now(), '0:" + (parseInt(req.body.tbxVergleichen) + parseInt(req.body.tbxNachdenken)) + ":0'),'" + req.body.tbxKonsens + "', ADDTIME(now(), '0:" + (parseInt(req.body.tbxVergleichen) + parseInt(req.body.tbxNachdenken) + parseInt(req.body.tbxKonsens)) + ":0'));", (err) => {                     
                 
@@ -237,11 +234,12 @@ app.post('/admin', (req, res, next) => {
                 })
             })    
         }else{
-            res.redirect('/')
+            console.log("Hallo1")
+            return next(new Error("Du hast keine Berechtigung dies zu tun!"))
         }
     })
 })
 
-app.use(function(err, res) {    
-    res.status(500).send('Es ist etwas schiefgegagenen. Hier die Fehlermeldung: ' + err.stack);
+app.use((err, req, res, next) => {        
+    res.status(500).send(err.stack);
 });

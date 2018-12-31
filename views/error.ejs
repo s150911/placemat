@@ -12,8 +12,12 @@
         <meta name="theme-color" content="#ffffff">
     </head>
     <body>        
-        <h1>BKB Placemat<img src="/images/placemat.png"/></h1>                       
-        <h2><%= error %></h2>
+        <h1>Fehler<img src="/images/placemat.png"/></h1>                       
+        <% if(error){ %>                
+            <% for(var i=0; i < error.length; i++) {%>
+                <p><%- error[i] %></p><hr>                    
+            <% } %>                                                
+            <% } %> 
         <p>&copy; 2018 Mein Name</p>         
     </body>
 </html>
