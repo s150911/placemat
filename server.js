@@ -175,13 +175,15 @@ app.get('/admin', (req, res,next) => {
                 if (err) return next(err)
                 
                 let anzeigen = []            
-
+                let button = ""
                 // Falls das Placemat bereits abgelaufen ist:
 
                 if(rows[0].placematVorbeiSeitSekunden > 0){
-                    anzeigen.push("Zur zeit kein aktives Platzdeckchen.")                    
+                    anzeigen.push("Zurzeit kein aktives Platzdeckchen.")                    
+                    button = "Neu anlegen"
                 }else{
                     anzeigen.push("Ab sofort:")
+                    button = "Placemat aktiv"
                 }
 
                 
@@ -202,7 +204,7 @@ app.get('/admin', (req, res,next) => {
                     dauerNachdenken: rows[0].dauerNachdenken,
                     dauerVergleichen: rows[0].dauerVergleichen,
                     dauerKonsens: rows[0].dauerKonsens,
-                    absenden: "Placemat aktiv!",
+                    absenden: button,
                     placematUser: result
                 })
             })
