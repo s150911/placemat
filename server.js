@@ -20,10 +20,12 @@ const dbVerbindung = mysql.createConnection({
 dbVerbindung.connect()
 
 app.get('/',(req, res, next) => {    
-    dbVerbindung.query("SELECT * from placemat;", (err, rows) => { 
+    
+    dbVerbindung.query("SELECT thema, zeitstempel, (TIMESTAMPDIFF(SECOND, endeUhrzeitKonsens, NOW())) AS placematVorbeiSeitSekunden from placemat;", (err, rows) => { 
+
         if (err) return next(err)       
 
-        if(rows[0] === undefined){
+        if(rows[0] === undefined || rows[0].placematVorbeiSeitSekunden > 430){
             res.render('index.ejs', {                    
                 anzeigen: ["Zur Zeit kein aktives Placemat"],
                 endeUhrzeitNachdenken: new Date(),
@@ -32,10 +34,10 @@ app.get('/',(req, res, next) => {
             })
         }else{
             res.render('index.ejs', {                    
-                anzeigen: [rows[0].thema, "Jetzt beitreten!"],
-                endeUhrzeitNachdenken: rows[0].endeUhrzeitNachdenken,
-                endeUhrzeitVergleichen: rows[0].endeUhrzeitVergleichen,
-                endeUhrzeitKonsens: rows[0].endeUhrzeitKonsens       
+                anzeigen: [rows[0].thema, "Läuft seit " + (rows[0].zeitstempel).getHours() + ":" + (rows[0].zeitstempel).getMinutes()  + ":" + (rows[0].zeitstempel).getSeconds() + " Uhr", "Jetzt mitmachen!"],
+                endeUhrzeitNachdenken: new Date(),
+                endeUhrzeitVergleichen: new Date(),
+                endeUhrzeitKonsens: new Date()
             })
         }        
     })    
@@ -240,7 +242,8 @@ app.post('/admin', (req, res, next) => {
     })
 })
 
-app.use((err, req, res, next) => {            
+app.use((err, req, res, next) => {    
+    console.log(err.stack)        
     res.render('error.ejs', {        
         error:["F E H L E R", err.message, "Falls Du nicht automatisch weitergeleitet wirst, dann ...", "Seite neu laden, um fortzufahren."]
     }) 
