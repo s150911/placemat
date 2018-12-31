@@ -148,14 +148,12 @@ app.get('/admin', (req, res,next) => {
 
     // Das zuletzt angelegte Placemat wird selektiert
     
-    dbVerbindung.query("SELECT * from placemat;", (err, rows) => {
+    dbVerbindung.query("SELECT *, (TIMESTAMPDIFF(SECOND, endeUhrzeitKonsens, NOW())) AS placematVorbeiSeitSekunden from placemat;", (err, rows) => {
         if (err) return next(err)         
 
         // Wenn es kein Placemat gibt:
 
         if(!rows.length){      
-            
-            console.log("Standardwerte anzeigen, weil es noch kein Placemat gibt")
             
             res.render('admin.ejs', {        
                 anzeigen: [],
@@ -177,7 +175,16 @@ app.get('/admin', (req, res,next) => {
                 if (err) return next(err)
                 
                 let anzeigen = []            
-                anzeigen.push("Ab sofort:")
+
+                // Falls das Placemat bereits abgelaufen ist:
+
+                if(rows[0].placematVorbeiSeitSekunden > 0){
+                    anzeigen.push("Zur zeit kein aktives Platzdeckchen.")                    
+                }else{
+                    anzeigen.push("Ab sofort:")
+                }
+
+                
                 anzeigen.push("NACHDENKEN UND SCHREIBEN: Jeder soll über sein Thema nachdenken und Notizen aufschreiben.") 
                 anzeigen.push(("0" + endeUhrzeitNachdenken.getHours()).slice(-2) +":" + ("0" + endeUhrzeitNachdenken.getMinutes()).slice(-2) + " Uhr in der jeweiligen Gruppe:") 
                 anzeigen.push("VERGLEICHEN: Jeder liest die Notizen derjenigen, die mit ihr / ihm in der Gruppe sind.")
