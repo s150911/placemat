@@ -13,8 +13,9 @@
     </head>
     <body>        
         <section>
-            <h2 class="full-width-borders"><img src="/images/placemat.png"/>BKB Placemat Admin</h2>                       
-            <% if(placematUser){ %>                    
+            <h2 class="full-width-borders"><img src="/images/placemat.png"/>Admin</h2>                       
+            <% if(placematUser){ %>    
+            <p></p>                
             <table border="1">
             <tr>
                 <td>Gruppe</td><td>Name</td><td>Treffpunkt</td>
@@ -23,23 +24,28 @@
                 <tr><td><%- placematUser[i].gruppe %></td><td><%- placematUser[i].name %></td><td><%- placematUser[i].treffpunkt %></td></tr>
             <% } %> 
             
-                </table>                        
+                </table>  
+                <hr class="adminHr">                      
             <% for(var i=0; i < anzeigen.length; i++) {%>
-                <p><%- anzeigen[i] %></p><hr>                    
-            <% } %>                   
+                <p class="admin"><%- anzeigen[i] %></p><hr>                    
+            <% } %>
+            <hr class="adminHr">                                         
             <% } %> 
             <form action="/admin" method="POST">
-                <p>Thema eingeben:</p>
+                <p class="admin">Thema eingeben:</p>
                 <input type="text" name="tbxThema" id="tbxThema" value="<%= thema%>">
-                <p>Anzahl der Gruppen eingeben:</p>
+                <p class="admin">Anzahl der Gruppen eingeben:</p>
                 <input type="number" name="tbxAnzahlGruppen" id="tbxAnzahlGruppen" value="<%= anzahlGruppen%>">            
-                <p>Nachdenken und Schreiben: Jeder notiert in seinem Segment eigene Gedanken zu der Hauptfrage (Dauer etwa fünf Minuten):</p>
+                <p class="admin">Nachdenken und Schreiben: Jeder notiert in seinem Segment eigene Gedanken zu der Hauptfrage (Dauer etwa fünf Minuten):</p>
                 <input type="number" name="tbxNachdenken" id="tbxNachdenken" value="<%= dauerNachdenken%>">            
-                <p>Stummes Vergleichen: Jeder liest die Notizen der anderen und stellt nur Rückfragen bei Verständnisproblemen oder Leseschwierigkeiten (Dauer etwa fünf Minuten):</p>
+                <p class="admin">Stummes Vergleichen: Jeder liest die Notizen der anderen und stellt nur Rückfragen bei Verständnisproblemen oder Leseschwierigkeiten (Dauer etwa fünf Minuten):</p>
                 <input type="number" name="tbxVergleichen" id="tbxVergleichen" value="<%= dauerVergleichen%>">            
-                <p>Teilen und Konsens finden: Die Gruppe entscheidet gemeinsam, welche der genannten Gedanken in die Mitte des Blattes geschrieben werden. Hilfreich ist eine Begrenzung, etwa „Einigt euch auf fünf Hauptpunkte.“ Diese Hauptpunkte können dann auch noch priorisiert werden. (Dauer etwa zehn Minuten):</p>
+                <p class="admin">Teilen und Konsens finden: Die Gruppe entscheidet gemeinsam, welche der genannten Gedanken in die Mitte des Blattes geschrieben werden. Hilfreich ist eine Begrenzung, etwa „Einigt euch auf fünf Hauptpunkte.“ Diese Hauptpunkte können dann auch noch priorisiert werden. (Dauer etwa zehn Minuten):</p>
                 <input type="number" name="tbxKonsens" id="tbxKonsens" value="<%= dauerKonsens%>">            
-                <p></p>
+                <p class="admin">Username:</p>
+                <input type="text" name="tbxUsername" id="tbxUsername">
+                <p class="admin">Password:</p>
+                <input type="password" name="tbxPassword" id="tbxPassword">            
                 <button id="btnButton"><%= absenden%></button>        
             </form>
             <p>&copy; 2018 GW11<br></p>        

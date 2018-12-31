@@ -20,14 +20,24 @@ const dbVerbindung = mysql.createConnection({
 dbVerbindung.connect()
 
 app.get('/',(req, res, next) => {    
-    dbVerbindung.query("SELECT thema from placemat;", (err, rows) => { 
+    dbVerbindung.query("SELECT * from placemat;", (err, rows) => { 
         if (err) return next(err)       
-        res.render('index.ejs', {                    
-            anzeigen: [rows[0].thema, "Jetzt beitreten!"],
-            endeUhrzeitNachdenken: new Date(),
-            endeUhrzeitVergleichen: new Date(),
-            endeUhrzeitKonsens: new Date()       
-        })
+
+        if(rows[0] === undefined){
+            res.render('index.ejs', {                    
+                anzeigen: ["Zur Zeit kein aktives Placemat"],
+                endeUhrzeitNachdenken: new Date(),
+                endeUhrzeitVergleichen: new Date(),
+                endeUhrzeitKonsens: new Date()       
+            })
+        }else{
+            res.render('index.ejs', {                    
+                anzeigen: [rows[0].thema, "Jetzt beitreten!"],
+                endeUhrzeitNachdenken: rows[0].endeUhrzeitNachdenken,
+                endeUhrzeitVergleichen: rows[0].endeUhrzeitVergleichen,
+                endeUhrzeitKonsens: rows[0].endeUhrzeitKonsens       
+            })
+        }        
     })    
 })
 
@@ -126,6 +136,14 @@ app.get('/admin', (req, res,next) => {
         console.log("Tabelle 'placematUser' erfolgreich angelegt, bzw. schon vorhanden.");
     })
 
+    dbVerbindung.query("CREATE TABLE IF NOT EXISTS users(username VARCHAR(50), password VARCHAR(50), PRIMARY KEY(username));", (err) => {        
+        if (err) return next(err)         
+        
+        // Falls kein Fehler auftritt, wird der Erfolg geloggt.
+        
+        console.log("Tabelle 'users' erfolgreich angelegt, bzw. schon vorhanden.");
+    })
+
     // Das zuletzt angelegte Placemat wird selektiert
     
     dbVerbindung.query("SELECT * from placemat;", (err, rows) => {
@@ -159,7 +177,7 @@ app.get('/admin', (req, res,next) => {
                 let anzeigen = []            
                 anzeigen.push("Ab sofort:")
                 anzeigen.push("NACHDENKEN UND SCHREIBEN: Jeder soll über sein Thema nachdenken und Notizen aufschreiben.") 
-                anzeigen.push(("0" + endeUhrzeitNachdenken.getHours()).slice(-2) +":" + ("0" + endeUhrzeitNachdenken.getMinutes()).slice(-2) + " Uhr in der jeweiliegn Gruppe:") 
+                anzeigen.push(("0" + endeUhrzeitNachdenken.getHours()).slice(-2) +":" + ("0" + endeUhrzeitNachdenken.getMinutes()).slice(-2) + " Uhr in der jeweiligen Gruppe:") 
                 anzeigen.push("VERGLEICHEN: Jeder liest die Notizen derjenigen, die mit ihr / ihm in der Gruppe sind.")
                 anzeigen.push(("0" + endeUhrzeitVergleichen.getHours()).slice(-2) +":" + ("0" + endeUhrzeitVergleichen.getMinutes()).slice(-2) + " Uhr:") 
                 anzeigen.push("TEILEN UND KONSENS FINDEN mit all denen, die mit ihr / ihm in der Gruppe sind")
@@ -195,20 +213,33 @@ app.post('/admin', (req, res, next) => {
         if (err) return next(err)
     })
 
-    dbVerbindung.query("INSERT INTO placemat(thema, zeitstempel, anzahlGruppen, dauerNachdenken, endeUhrzeitNachdenken, dauerVergleichen, endeUhrzeitVergleichen, dauerKonsens, endeUhrzeitKonsens) VALUES ('" + req.body.tbxThema + "', now(), '" + req.body.tbxAnzahlGruppen + "','" + req.body.tbxNachdenken + "', ADDTIME(now(), '0:" + req.body.tbxNachdenken + ":0'),'" + req.body.tbxVergleichen + "', ADDTIME(now(), '0:" + (parseInt(req.body.tbxVergleichen) + parseInt(req.body.tbxNachdenken)) + ":0'),'" + req.body.tbxKonsens + "', ADDTIME(now(), '0:" + (parseInt(req.body.tbxVergleichen) + parseInt(req.body.tbxNachdenken) + parseInt(req.body.tbxKonsens)) + ":0'));", (err) => {                     
+    dbVerbindung.query("SELECT COUNT(*) AS anzahl FROM users WHERE (username = '" + req.body.tbxUsername + "') AND (password = '" + req.body.tbxPassword + "');", (err,rows) => {                     
+        
         if (err) return next(err)
+   
+        if (rows[0].anzahl === 1){
+   
+            console.log(rows[0].anzahl)
 
-        res.render('admin.ejs', {            
-            anzeigen: [],
-            thema: req.body.tbxThema,
-            anzahlGruppen: req.body.tbxAnzahlGruppen,
-            dauerNachdenken: req.body.tbxNachdenken,
-            dauerVergleichen: req.body.tbxVergleichen,
-            dauerKonsens: req.body.tbxKonsens,
-            absenden: "Platzdeckchen aktiv!",
-            placematUser: null
-        })
-    });    
+            dbVerbindung.query("INSERT INTO placemat(thema, zeitstempel, anzahlGruppen, dauerNachdenken, endeUhrzeitNachdenken, dauerVergleichen, endeUhrzeitVergleichen, dauerKonsens, endeUhrzeitKonsens) VALUES ('" + req.body.tbxThema + "', now(), '" + req.body.tbxAnzahlGruppen + "','" + req.body.tbxNachdenken + "', ADDTIME(now(), '0:" + req.body.tbxNachdenken + ":0'),'" + req.body.tbxVergleichen + "', ADDTIME(now(), '0:" + (parseInt(req.body.tbxVergleichen) + parseInt(req.body.tbxNachdenken)) + ":0'),'" + req.body.tbxKonsens + "', ADDTIME(now(), '0:" + (parseInt(req.body.tbxVergleichen) + parseInt(req.body.tbxNachdenken) + parseInt(req.body.tbxKonsens)) + ":0'));", (err) => {                     
+                
+                if (err) return next(err)
+        
+                res.render('admin.ejs', {            
+                    anzeigen: [],
+                    thema: req.body.tbxThema,
+                    anzahlGruppen: req.body.tbxAnzahlGruppen,
+                    dauerNachdenken: req.body.tbxNachdenken,
+                    dauerVergleichen: req.body.tbxVergleichen,
+                    dauerKonsens: req.body.tbxKonsens,
+                    absenden: "Platzdeckchen aktiv!",
+                    placematUser: null
+                })
+            })    
+        }else{
+            res.redirect('/')
+        }
+    })
 })
 
 app.use(function(err, res) {    
