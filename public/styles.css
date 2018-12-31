@@ -85,3 +85,9 @@ tr:nth-child(even) {
   font-size: 3vw;    
   text-align: justify
 }
+
+h2, .error{
+  background:red;  
+  border-left: 600rem solid maroon;
+  border-right: 600rem solid maroon;
+}
