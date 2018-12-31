@@ -240,6 +240,8 @@ app.post('/admin', (req, res, next) => {
     })
 })
 
-app.use((err, req, res, next) => {        
-    res.status(500).send(err.stack);
+app.use((err, req, res, next) => {            
+    res.render('error.ejs', {        
+        error:["F E H L E R", err.message, "Seite neu laden, um fortzufahren."]
+    }) 
 });

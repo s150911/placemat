@@ -12,12 +12,14 @@
         <meta name="theme-color" content="#ffffff">
     </head>
     <body>        
-        <h1>Fehler<img src="/images/placemat.png"/></h1>                       
-        <% if(error){ %>                
-            <% for(var i=0; i < error.length; i++) {%>
-                <p><%- error[i] %></p><hr>                    
-            <% } %>                                                
-            <% } %> 
-        <p>&copy; 2018 Mein Name</p>         
+        <section>
+                <h1><img src="/images/placemat.png"/></h1>                       
+                <% if(error){ %>                
+                    <% for(var i=0; i < error.length; i++) {%>
+                        <p><%- error[i] %></p><hr>                    
+                    <% } %>                                                
+                    <% } %> 
+                <p>&copy; 2018 Mein Name</p>         
+        </section>        
     </body>
 </html>
