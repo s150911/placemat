@@ -25,7 +25,7 @@ app.get('/',(req, res, next) => {
 
         if (err) return next(err)       
 
-        if(rows[0] === undefined || rows[0].placematVorbeiSeitSekunden > 430){
+        if(rows[0] === undefined || rows[0].placematVorbeiSeitSekunden > 120){
             res.render('index.ejs', {                    
                 anzeigen: ["Zur Zeit kein aktives Placemat"],
                 endeUhrzeitNachdenken: new Date(),
@@ -45,6 +45,8 @@ app.get('/',(req, res, next) => {
 
 app.post('/', (req, res, next) => {    
     
+    if(req.body.tbxName === "") return next(new Error("Der Name darf nicht leer sein."))
+
     dbVerbindung.query("SELECT * from placemat;", (err, rows) => {
         if (err) return next(err)
         let placematUsers = []   
