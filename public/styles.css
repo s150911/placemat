@@ -4,7 +4,7 @@ html, body {
   font-family: Arial, Helvetica, sans-serif;  
 }
 body {  
-  background-image: url("images/sky.jpg"); 
+  background-image: url("images/bkb.jpg"); 
   background-repeat: no-repeat;
   background-size: cover;  
 }
@@ -21,12 +21,12 @@ h2, .full-width-borders {
   margin: 0 -601.5rem;
   /* match section padding (1.5rem) */
   padding: .25rem 1.5rem;
-  background: red;
+  background:#4CAF50;
   /* border solid, not RGBa (Safari bug) */
   /* 9600px or 10240px to avoid Chrome bug */
   /* or equivalent in ems or rems (9600/16) */
-  border-left: 600rem solid maroon;
-  border-right: 600rem solid maroon;
+  border-left: 600rem solid rgb(13, 83, 72);
+  border-right: 600rem solid rgb(13, 83, 72);
   color: white;
   font-size: 3.5vw;  
 }
