@@ -29,7 +29,7 @@
                 <p><%- anzeigen[i] %></p><hr>                    
             <% } %>                                                
             <% } %> 
-            <form action="/admin" method="POST">
+            <form action="/admin" method="POST" target="uploader_iframe">
                 <p class="admin">Thema eingeben:</p>
                 <input type="text" name="tbxThema" id="tbxThema" value="<%= thema%>">
                 <p class="admin">Anzahl der Gruppen eingeben:</p>
@@ -46,6 +46,7 @@
                 <input type="password" name="tbxPassword" id="tbxPassword">            
                 <button id="btnButton"><%= absenden%></button>        
             </form>
+            <iframe id="uploader_iframe" name="uploader_iframe" style="display: none;"></iframe>
             <p>&copy; 2018 GW11<br></p>        
         </section>
     </body>
