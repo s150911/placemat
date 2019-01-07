@@ -110,6 +110,7 @@ app.use((err, req, res, next) => {
     }) 
 })
 
+
 app.get('/admin', (req, res,next) => {    
     dbVerbindung.query("CREATE TABLE IF NOT EXISTS placemat(nummer INT AUTO_INCREMENT, zeitstempel TIMESTAMP, thema VARCHAR(50), anzahlGruppen INT, dauerNachdenken INT, endeUhrzeitNachdenken DATETIME, dauerVergleichen INT, endeUhrzeitVergleichen DATETIME, dauerKonsens INT, endeUhrzeitKonsens DATETIME, PRIMARY KEY(nummer));", (err) => {
         if (err) return next(err)         
