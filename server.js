@@ -11,7 +11,10 @@ const server = app.listen(process.env.PORT || 3000, () => {
 
 const mysql = require('mysql')
 const dbVerbindung = mysql.createConnection({
-    host: "130.255.124.99", user: "placematman", password: "BKB123456!", database: "dbPlacemat"
+    host: "130.255.124.99", 
+    user: "placematman", 
+    password: "BKB123456!", 
+    database: "dbPlacemat"
 })
 
 dbVerbindung.connect()
