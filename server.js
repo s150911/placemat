@@ -11,21 +11,29 @@ const server = app.listen(process.env.PORT || 3000, () => {
 
 const mysql = require('mysql')
 const dbVerbindung = mysql.createConnection({
-    host: "130.255.124.99", 
-    user: "placematman", 
-    password: "BKB123456!", 
-    database: "dbPlacemat"
+    host: "130.255.124.99", user: "placematman", password: "BKB123456!", database: "dbPlacemat"
 })
 
 dbVerbindung.connect()
 
-app.get('/',(req, res, next) => {    
-    
+function anzeigen(placematUser, endeUhrzeitNachdenken, endeUhrzeitVergleichen, endeUhrzeitKonsens){
+    let anzeigen = ["Hallo " + placematUser.name + "!"]                
+    anzeigen.push("Ab sofort:")
+    anzeigen.push("NACHDENKEN UND SCHREIBEN: Du sollst über Dein Thema nachdenken und Notizen aufschreiben.") 
+    anzeigen.push(("0" + endeUhrzeitNachdenken.getHours()).slice(-2) +":" + ("0" + endeUhrzeitNachdenken.getMinutes()).slice(-2) + " Uhr bei " + placematUser.treffpunkt + ":") 
+    anzeigen.push("VERGLEICHEN: Du liest die Notizen derjenigen, die sich mit Dir bei " + placematUser.treffpunkt + " treffen.")
+    anzeigen.push(("0" + endeUhrzeitVergleichen.getHours()).slice(-2) +":" + ("0" + endeUhrzeitVergleichen.getMinutes()).slice(-2) + " Uhr bei " + placematUser.treffpunkt + ":") 
+    anzeigen.push("TEILEN UND KONSENS FINDEN mit all denen, die sich mit Dir bei " + placematUser.treffpunkt + " eingefunden haben.")
+    anzeigen.push(("0" + endeUhrzeitKonsens.getHours()).slice(-2) +":" + ("0" + endeUhrzeitKonsens.getMinutes()).slice(-2) + " Uhr im Plenum:")
+    anzeigen.push("PÄSENTATION. Viel Spaß :-)")   
+    return anzeigen
+}
+
+app.get('/',(req, res, next) => {        
     dbVerbindung.query("SELECT thema, zeitstempel, (TIMESTAMPDIFF(SECOND, endeUhrzeitKonsens, NOW())) AS placematVorbeiSeitSekunden from placemat;", (err, rows) => { 
-
         if (err) return next(err)       
-
-        if(rows[0] === undefined || rows[0].placematVorbeiSeitSekunden > 120){
+        
+		if(rows[0] === undefined || rows[0].placematVorbeiSeitSekunden > 120){
             res.render('index.ejs', {                    
                 anzeigen: ["Zur Zeit kein aktives Placemat"],
                 endeUhrzeitNachdenken: new Date(),
@@ -44,9 +52,7 @@ app.get('/',(req, res, next) => {
 })
 
 app.post('/', (req, res, next) => {    
-    
     if(req.body.tbxName === "") return next(new Error("Der Name darf nicht leer sein."))
-
     dbVerbindung.query("SELECT * from placemat;", (err, rows) => {
         if (err) return next(err)
         let placematUsers = []   
@@ -54,8 +60,7 @@ app.post('/', (req, res, next) => {
         let anzahlGruppen = rows[0].anzahlGruppen
         let endeUhrzeitNachdenken = rows[0].endeUhrzeitNachdenken
         let endeUhrzeitVergleichen = rows[0].endeUhrzeitVergleichen
-        let endeUhrzeitKonsens = rows[0].endeUhrzeitKonsens
-               
+        let endeUhrzeitKonsens = rows[0].endeUhrzeitKonsens               
         dbVerbindung.query("SELECT * from placematuser;", (err, rows) => {         
             if (err) return next(err)
             for (let row of rows) {                
@@ -63,20 +68,9 @@ app.post('/', (req, res, next) => {
                 placematUser.name = row.name
                 placematUser.gruppe = row.gruppe                
                 placematUser.treffpunkt = row.treffpunkt
-
-                if(row.name === req.body.tbxName){
-                    let anzeigen = [placematUser.name + ", Du bist bereits angemeldet."]                    
-                    anzeigen.push("Hier nochmal für Dich:")
-                    anzeigen.push("Ab sofort:")
-                    anzeigen.push("NACHDENKEN UND SCHREIBEN: Du sollst über Dein Thema nachdenken und Notizen aufschreiben.") 
-                    anzeigen.push(("0" + endeUhrzeitNachdenken.getHours()).slice(-2) +":" + ("0" + endeUhrzeitNachdenken.getMinutes()).slice(-2) + " Uhr bei " + placematUser.treffpunkt + ":") 
-                    anzeigen.push("VERGLEICHEN: Du liest die Notizen derjenigen, die sich mit Dir bei " + placematUser.treffpunkt + " treffen.")
-                    anzeigen.push(("0" + endeUhrzeitVergleichen.getHours()).slice(-2) +":" + ("0" + endeUhrzeitVergleichen.getMinutes()).slice(-2) + " Uhr bei " + placematUser.treffpunkt + ":") 
-                    anzeigen.push("TEILEN UND KONSENS FINDEN mit all denen, die sich mit Dir bei " + placematUser.treffpunkt + " eingefunden haben.")
-                    anzeigen.push(("0" + endeUhrzeitKonsens.getHours()).slice(-2) +":" + ("0" + endeUhrzeitKonsens.getMinutes()).slice(-2) + " Uhr im Plenum:")
-                    anzeigen.push("PÄSENTATION. Viel Spaß :-)")  
+                if(row.name === req.body.tbxName){                    
                     res.render('index.ejs', {        
-                        anzeigen: anzeigen,
+                        anzeigen: anzeigen(placematUser, endeUhrzeitNachdenken, endeUhrzeitVergleichen, endeUhrzeitKonsens),
                         endeUhrzeitNachdenken: endeUhrzeitNachdenken,
                         endeUhrzeitVergleichen: endeUhrzeitVergleichen,
                         endeUhrzeitKonsens: endeUhrzeitKonsens       
@@ -85,36 +79,23 @@ app.post('/', (req, res, next) => {
                 }
                 placematUsers.push(placematUser)
             }
-
             let placematUser = new PlacematUser()
             placematUser.name = req.body.tbxName
             placematUser.thema = thema
-
             if(placematUsers.length === 0 || !(placematUsers.length % anzahlGruppen)){        
                 placematUser.gruppe = 1
             }else{
-                placematUser.gruppe = placematUsers[placematUsers.length - 1].gruppe + 1                
+              placematUser.gruppe = placematUsers[placematUsers.length - 1].gruppe + 1                
             }
-            
             if(anzahlGruppen > placematUsers.length){
                 placematUser.treffpunkt = placematUser.name
             }else{
                 placematUser.treffpunkt = (placematUsers.filter((p) => p.gruppe === placematUser.gruppe))[0].treffpunkt                
             }
-
             dbVerbindung.query("INSERT INTO placematuser(gruppe, name, thema, treffpunkt) VALUES ('" + placematUser.gruppe + "','" + placematUser.name + "','" + placematUser.thema + "','" + placematUser.treffpunkt + "');", (err, result) => {
-                if (err) return next(err)
-                let anzeigen = ["Hallo " + placematUser.name + "!"]                
-                anzeigen.push("Ab sofort:")
-                anzeigen.push("NACHDENKEN UND SCHREIBEN: Du sollst über Dein Thema nachdenken und Notizen aufschreiben.") 
-                anzeigen.push(("0" + endeUhrzeitNachdenken.getHours()).slice(-2) +":" + ("0" + endeUhrzeitNachdenken.getMinutes()).slice(-2) + " Uhr bei " + placematUser.treffpunkt + ":") 
-                anzeigen.push("VERGLEICHEN: Du liest die Notizen derjenigen, die sich mit Dir bei " + placematUser.treffpunkt + " treffen.")
-                anzeigen.push(("0" + endeUhrzeitVergleichen.getHours()).slice(-2) +":" + ("0" + endeUhrzeitVergleichen.getMinutes()).slice(-2) + " Uhr bei " + placematUser.treffpunkt + ":") 
-                anzeigen.push("TEILEN UND KONSENS FINDEN mit all denen, die sich mit Dir bei " + placematUser.treffpunkt + " eingefunden haben.")
-                anzeigen.push(("0" + endeUhrzeitKonsens.getHours()).slice(-2) +":" + ("0" + endeUhrzeitKonsens.getMinutes()).slice(-2) + " Uhr im Plenum:")
-                anzeigen.push("PÄSENTATION. Viel Spaß :-)")                
+                if (err) return next(err)                
                 res.render('index.ejs', {        
-                    anzeigen: anzeigen,    
+                    anzeigen: anzeigen(placematUser, endeUhrzeitNachdenken, endeUhrzeitVergleichen, endeUhrzeitKonsens),    
                     endeUhrzeitNachdenken: endeUhrzeitNachdenken,
                     endeUhrzeitVergleichen: endeUhrzeitVergleichen,
                     endeUhrzeitKonsens: endeUhrzeitKonsens       
@@ -122,6 +103,11 @@ app.post('/', (req, res, next) => {
             })    
         })
     })
+})
+app.use((err, req, res, next) => {    
+    res.render('error.ejs', {        
+        error:["F E H L E R", err.message, "Falls Du nicht automatisch weitergeleitet wirst, dann ...", "Seite neu laden, um fortzufahren."]
+    }) 
 })
 
 app.get('/admin', (req, res,next) => {    
@@ -186,7 +172,6 @@ app.get('/admin', (req, res,next) => {
                     anzeigen.push("Ab sofort:")
                     button = "Placemat aktiv"
                 }
-
                 
                 anzeigen.push("NACHDENKEN UND SCHREIBEN: Jeder soll über sein Thema nachdenken und Notizen aufschreiben.") 
                 anzeigen.push(("0" + endeUhrzeitNachdenken.getHours()).slice(-2) +":" + ("0" + endeUhrzeitNachdenken.getMinutes()).slice(-2) + " Uhr in der jeweiligen Gruppe:") 
@@ -251,10 +236,3 @@ app.post('/admin', (req, res, next) => {
         }
     })
 })
-
-app.use((err, req, res, next) => {    
-    console.log(err.stack)        
-    res.render('error.ejs', {        
-        error:["F E H L E R", err.message, "Falls Du nicht automatisch weitergeleitet wirst, dann ...", "Seite neu laden, um fortzufahren."]
-    }) 
-});

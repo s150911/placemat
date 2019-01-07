@@ -13,14 +13,14 @@
                 
         <script>
             function timer(stunde, minute, sekunde, message){
-                var now = new Date();                        
-                var audio = new Audio('notify.mp3');            
-                var millisTill10 = new Date(now.getFullYear(), now.getMonth(), now.getDate(), stunde, minute, sekunde, 0) - now;
+                var now = new Date()                        
+                var audio = new Audio('notify.mp3')            
+                var millisTill10 = new Date(now.getFullYear(), now.getMonth(), now.getDate(), stunde, minute, sekunde, 0) - now
                 if (millisTill10 < 0) {
-                    millisTill10 += 86400000; // it's after 10am, try 10am tomorrow.
+                    millisTill10 += 86400000
                 }
-                setTimeout(function(){audio.play();}, millisTill10);            
-                setTimeout(function(){alert(message);}, millisTill10);            
+                setTimeout(function(){audio.play();}, millisTill10)            
+                setTimeout(function(){alert(message);}, millisTill10)
             }
             timer("<%= endeUhrzeitNachdenken.getHours() %>","<%= endeUhrzeitNachdenken.getMinutes() %>","<%= endeUhrzeitNachdenken.getSeconds() %>","Nachdenken ist jetzt vorbei ...")
             timer("<%= endeUhrzeitVergleichen.getHours() %>","<%= endeUhrzeitVergleichen.getMinutes() %>","<%= endeUhrzeitVergleichen.getSeconds() %>","Vergleichen ist jetzt vorbei ...")
