@@ -90,7 +90,8 @@ app.post('/', (req, res, next) => {
             if(anzahlGruppen > placematUsers.length){
                 placematUser.treffpunkt = placematUser.name
             }else{
-                placematUser.treffpunkt = (placematUsers.filter((p) => p.gruppe === placematUser.gruppe))[0].treffpunkt                
+                let x = (placematUsers.filter((p) => p.gruppe === placematUser.gruppe))[0].treffpunkt                
+                placematUser.treffpunkt = x
             }
             dbVerbindung.query("INSERT INTO placematuser(gruppe, name, thema, treffpunkt) VALUES ('" + placematUser.gruppe + "','" + placematUser.name + "','" + placematUser.thema + "','" + placematUser.treffpunkt + "');", (err, result) => {
                 if (err) return next(err)                
