@@ -34,7 +34,7 @@ app.get('/',(req, res, next) => {
             })
         }else{
             res.render('index.ejs', {                    
-                anzeigen: [rows[0].thema, "Läuft seit " + (rows[0].zeitstempel).getHours() + ":" + (rows[0].zeitstempel).getMinutes()  + ":" + (rows[0].zeitstempel).getSeconds() + " Uhr", "Jetzt mitmachen!"],
+                anzeigen: [rows[0].thema, "Läuft seit " + ("0" + (rows[0].zeitstempel).getHours()).slice(-2) + ":" + ("0" + (rows[0].zeitstempel).getMinutes()).slice(-2)  + ":" + (rows[0].zeitstempel).getSeconds() + " Uhr", "Jetzt mitmachen!"],
                 endeUhrzeitNachdenken: new Date(),
                 endeUhrzeitVergleichen: new Date(),
                 endeUhrzeitKonsens: new Date()
