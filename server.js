@@ -11,7 +11,7 @@ const server = app.listen(process.env.PORT || 3000, () => {
 
 const mysql = require('mysql')
 const dbVerbindung = mysql.createConnection({
-    host: "10.40.38.110", 
+    host: "130.255.124.99", 
     user: "placematman", 
     password: "BKB123456!", 
     database: "dbPlacemat"
@@ -84,20 +84,15 @@ app.post('/', (req, res, next) => {
             }
             let placematUser = new PlacematUser()
             placematUser.name = req.body.tbxName
-            placematUser.thema = thema
-            if(placematUsers.length === 0 || !(placematUsers.length % anzahlGruppen)){        
-                placematUser.gruppe = 1
-            }else{
-                placematUser.gruppe = placematUsers[placematUsers.length - 1].gruppe + 1
-            }
+            placematUser.thema = thema                           
+            placematUser.gruppe = placematUsers.length % anzahlGruppen + 1
+                        
             if(anzahlGruppen > placematUsers.length){
-                placematUser.treffpunkt = placematUser.name
-            }else{
-                if (!(placematUsers.filter((p) => p.gruppe === placematUser.gruppe))[0]) return next(err)
+                placematUser.treffpunkt = placematUser.name                
+            }else{                
                 placematUser.treffpunkt = (placematUsers.filter((p) => p.gruppe === placematUser.gruppe))[0].treffpunkt
             }
-            dbVerbindung.query("INSERT INTO placematuser(gruppe, name, thema, treffpunkt, zeitstempel) VALUES ('" + placematUser.gruppe + "','" + placematUser.name + "','" + placematUser.thema + "','" + placematUser.treffpunkt + "' , NOW());", (err, result) => {
-                dbVerbindung.end()
+            dbVerbindung.query("INSERT INTO placematuser(gruppe, name, thema, treffpunkt, zeitstempel) VALUES ('" + placematUser.gruppe + "','" + placematUser.name + "','" + placematUser.thema + "','" + placematUser.treffpunkt + "' , NOW());", (err, result) => {                
                 if (err) return next(err)                
                 res.render('index.ejs', {        
                     anzeigen: anzeigen(placematUser, endeUhrzeitNachdenken, endeUhrzeitVergleichen, endeUhrzeitKonsens),    
