@@ -107,7 +107,7 @@ app.post('/', (req, res, next) => {
 app.use((err, req, res, next) => {    
     console.log(err.stack)
     res.render('error.ejs', {        
-        error:["F E H L E R", err.stack, "Falls Du nicht automatisch weitergeleitet wirst, dann ...", "Seite neu laden, um fortzufahren."]
+        error:["F E H L E R", err.message, "Falls Du nicht automatisch weitergeleitet wirst, dann ...", "Seite neu laden, um fortzufahren."]
     }) 
 })
 
