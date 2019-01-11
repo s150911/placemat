@@ -11,7 +11,7 @@ const server = app.listen(process.env.PORT || 3000, () => {
 
 const mysql = require('mysql')
 const dbVerbindung = mysql.createConnection({
-    host: "130.255.124.99", 
+    host: "10.40.38.110", 
     user: "placematman", 
     password: "BKB123456!", 
     database: "dbPlacemat"
@@ -45,7 +45,7 @@ app.get('/',(req, res, next) => {
             })
         }else{
             res.render('index.ejs', {                    
-                anzeigen: [rows[0].thema, "Läuft seit " + ("0" + (rows[0].zeitstempel).getHours()).slice(-2) + ":" + ("0" + (rows[0].zeitstempel).getMinutes()).slice(-2)  + ":" + (rows[0].zeitstempel).getSeconds() + " Uhr", "Jetzt mitmachen!"],
+                anzeigen: [rows[0].thema, "Läuft seit " + ("0" + (rows[0].zeitstempel).getHours()).slice(-2) + ":" + ("0" + (rows[0].zeitstempel).getMinutes()).slice(-2)  + ":" + ("0" + (rows[0].zeitstempel).getSeconds()).slice(-2) + " Uhr", "Jetzt mitmachen!"],
                 endeUhrzeitNachdenken: new Date(),
                 endeUhrzeitVergleichen: new Date(),
                 endeUhrzeitKonsens: new Date()
@@ -56,15 +56,15 @@ app.get('/',(req, res, next) => {
 
 app.post('/', (req, res, next) => {    
     if(req.body.tbxName === "") return next(new Error("Der Name darf nicht leer sein."))
+    let placematUsers = []
     dbVerbindung.query("SELECT * from placemat;", (err, rows) => {
-        if (err) return next(err)
-        let placematUsers = []   
+        if (err) return next(err)           
         let thema = rows[0].thema        
         let anzahlGruppen = rows[0].anzahlGruppen
         let endeUhrzeitNachdenken = rows[0].endeUhrzeitNachdenken
         let endeUhrzeitVergleichen = rows[0].endeUhrzeitVergleichen
         let endeUhrzeitKonsens = rows[0].endeUhrzeitKonsens               
-        dbVerbindung.query("SELECT * from placematuser;", (err, rows) => {         
+        dbVerbindung.query("SELECT * from placematuser;", (err, rows) => {
             if (err) return next(err)
             for (let row of rows) {                
                 let placematUser = new PlacematUser()
@@ -88,15 +88,16 @@ app.post('/', (req, res, next) => {
             if(placematUsers.length === 0 || !(placematUsers.length % anzahlGruppen)){        
                 placematUser.gruppe = 1
             }else{
-              placematUser.gruppe = placematUsers[placematUsers.length - 1].gruppe + 1                
+                placematUser.gruppe = placematUsers[placematUsers.length - 1].gruppe + 1
             }
             if(anzahlGruppen > placematUsers.length){
                 placematUser.treffpunkt = placematUser.name
             }else{
-                let x = (placematUsers.filter((p) => p.gruppe === placematUser.gruppe))[0].treffpunkt                
-                placematUser.treffpunkt = x
+                if (!(placematUsers.filter((p) => p.gruppe === placematUser.gruppe))[0]) return next(err)
+                placematUser.treffpunkt = (placematUsers.filter((p) => p.gruppe === placematUser.gruppe))[0].treffpunkt
             }
-            dbVerbindung.query("INSERT INTO placematuser(gruppe, name, thema, treffpunkt) VALUES ('" + placematUser.gruppe + "','" + placematUser.name + "','" + placematUser.thema + "','" + placematUser.treffpunkt + "');", (err, result) => {
+            dbVerbindung.query("INSERT INTO placematuser(gruppe, name, thema, treffpunkt, zeitstempel) VALUES ('" + placematUser.gruppe + "','" + placematUser.name + "','" + placematUser.thema + "','" + placematUser.treffpunkt + "' , NOW());", (err, result) => {
+                dbVerbindung.end()
                 if (err) return next(err)                
                 res.render('index.ejs', {        
                     anzeigen: anzeigen(placematUser, endeUhrzeitNachdenken, endeUhrzeitVergleichen, endeUhrzeitKonsens),    
@@ -109,8 +110,9 @@ app.post('/', (req, res, next) => {
     })
 })
 app.use((err, req, res, next) => {    
+    console.log(err.stack)
     res.render('error.ejs', {        
-        error:["F E H L E R", err.message, "Falls Du nicht automatisch weitergeleitet wirst, dann ...", "Seite neu laden, um fortzufahren."]
+        error:["F E H L E R", err.stack, "Falls Du nicht automatisch weitergeleitet wirst, dann ...", "Seite neu laden, um fortzufahren."]
     }) 
 })
 
@@ -122,7 +124,7 @@ app.get('/admin', (req, res,next) => {
         console.log("Tabelle 'placemat' erfolgreich angelegt, bzw. schon vorhanden.");
     })
 
-    dbVerbindung.query("CREATE TABLE IF NOT EXISTS placematUser(gruppe INT, name VARCHAR(50), thema VARCHAR(50), treffpunkt VARCHAR(50), PRIMARY KEY(name,thema));", (err) => {        
+    dbVerbindung.query("CREATE TABLE IF NOT EXISTS placematUser(gruppe INT, name VARCHAR(50), thema VARCHAR(50), treffpunkt VARCHAR(50), zeitstempel TIMESTAMP, PRIMARY KEY(name,thema));", (err) => {        
         if (err) return next(err)         
         
         // Falls kein Fehler auftritt, wird der Erfolg geloggt.
