@@ -1,5 +1,7 @@
 const { PlacematUser } = require("./PlacematUser");
 const express = require('express')
+const request = require('request')
+const cookieParser = require('cookie-parser')
 const app = express()
 app.set('view engine', 'ejs')
 app.use(express.static('public'))
