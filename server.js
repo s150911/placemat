@@ -177,11 +177,11 @@ app.get('/admin', (req, res,next) => {
                     button = "Placemat aktiv"
                 }
                 
-                anzeigen.push("NACHDENKEN UND SCHREIBEN: Notieren Sie zum gegebenen Thema eigene Gedanken.") 
+                anzeigen.push("NACHDENKEN UND SCHREIBEN: Notieren Sie zum gegebenen Thema eigene Gedanken!") 
                 anzeigen.push(("0" + endeUhrzeitNachdenken.getHours()).slice(-2) +":" + ("0" + endeUhrzeitNachdenken.getMinutes()).slice(-2) + " Uhr in der jeweiligen Gruppe:") 
-                anzeigen.push("STUMMES VERGLEICHEN: Gehen Sie zum Gruppentreffpunkt. Lesen Sie leise die Notizen der anderen Gruppenmitglieder.")
+                anzeigen.push("STUMMES VERGLEICHEN: Gehen Sie zum Gruppentreffpunkt. Lesen Sie leise die Notizen der anderen Gruppenmitglieder!")
                 anzeigen.push(("0" + endeUhrzeitVergleichen.getHours()).slice(-2) +":" + ("0" + endeUhrzeitVergleichen.getMinutes()).slice(-2) + " Uhr:") 
-                anzeigen.push("TEILEN UND KONSENS FINDEN: Besprechen sie sich in Ihrer Gruppe. Dokumentation in Padlet als Wolke.")
+                anzeigen.push("TEILEN UND KONSENS FINDEN: Besprechen sie sich in Ihrer Gruppe. Dokumentation in Padlet als Wolke!")
                 anzeigen.push(("0" + endeUhrzeitKonsens.getHours()).slice(-2) +":" + ("0" + endeUhrzeitKonsens.getMinutes()).slice(-2) + " Uhr:")
                 anzeigen.push("PÄSENTATION.") 
 
